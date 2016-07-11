@@ -86,7 +86,7 @@ class Map {
       this.engine = new BABYLON.Engine(canvas, true);
       this.scene = new Scene(this.engine).getScene();
       window.addEventListener("resize", () => {
-            map.engine.resize();
+            this.engine.resize();
          });
    }
    runRenderLoop() {
