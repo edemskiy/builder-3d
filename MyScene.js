@@ -37,6 +37,9 @@ class TStairs extends TRigid{
       this.stairsNum = stairsNum;
       this.stairHeight = stairHeight;
       this.stairLength = stairLength;
+      this.length = length;
+      this.height = height;
+      this.width = width;
    }
    setPosition(x,y,z){
       for(let i = 0; i < this.stairsNum; i++){
@@ -62,22 +65,33 @@ class TWall extends TRigid{
       this.meshArr[0] = wall;
       this.height = height;
       this.width = width;
-      console.log(this);
-   }
-   setSize(height, width){
-      this.meshArr[0].scaling.y = height/this.height;
-      this.meshArr[0].scaling.x = width/this.width;
-      this.height = height;
-      this.width = width;
    }
    setPosition(x, y, z){
-      this.meshArr[0].position = new BABYLON.Vector3(x,y,z);
+      if(this.meshArr.length === 1){
+         this.meshArr[0].position = new BABYLON.Vector3(x,y,z);
+      }
    }
    rotateY(alpha){
       this.meshArr[0].rotation.y = alpha;
    }
-   setMaterial(material){
-      meshArr[0].material = material;
+   getPosition(){
+      return {
+         x: this.meshArr[0].position.x,
+         y: this.meshArr[0].position.y,
+         z: this.meshArr[0].position.z
+      }
+   }
+}
+class TFloor extends TWall{
+   constructor(height, width, scene){
+      super(height, width, scene);
+      this.meshArr[0].rotation.x = Math.PI/2;
+   }
+}
+class TCeiling extends TWall{
+   constructor(height, width, scene){
+      super(height, width, scene);
+      this.meshArr[0].rotation.x = -Math.PI/2;
    }
 }
 
@@ -102,74 +116,65 @@ class Scene {
       light.intensity = .75;
       this.light = light;
 
-      /* Пол */
-      // Params: name, width, depth, subdivisions, scene
-      let ground = BABYLON.Mesh.CreateGround("ground1", 25, 25, 2, this.scene);
-      ground.scaling.z = 2;
-      let groundmaterial = new BABYLON.StandardMaterial("groundmaterial", this.scene);
-      groundmaterial.diffuseColor = new BABYLON.Color3(1, 0.85, 0.62);
-      ground.material = groundmaterial;
-      this.groundmaterial = groundmaterial;
+      /* Пол */      
+      let ground = new TFloor(70, 40, scene);
+      let groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.scene);
+      groundMaterial.diffuseColor = new BABYLON.Color3(1, 0.85, 0.62);
+      ground.setMaterial(groundMaterial);
       this.ground = ground;
 
       /* Передняя стенка */
-      let back = BABYLON.Mesh.CreatePlane("back", 25.0, this.scene);
-      back.position = new BABYLON.Vector3(0,6.25,25);
-      back.scaling.y = 0.5;
-      let backmaterial = new BABYLON.StandardMaterial("backmaterial", scene);
-      backmaterial.diffuseColor = new BABYLON.Color3(0.7, 0.5, 0.5);
-      back.material = backmaterial;
-      this.backmaterial = backmaterial;
+      let back = new TWall(25, ground.width, this.scene);
+      back.setPosition(0, back.height/2, ground.height/2);  
+      let wallMaterial = new BABYLON.StandardMaterial("wallMaterial", this.scene);
+      wallMaterial.diffuseColor = new BABYLON.Color3(0.7, 0.5, 0.5);
+      back.setMaterial(wallMaterial);
       this.back = back;
 
       /* Правая стенка */
-      let right = BABYLON.Mesh.CreatePlane("left", 25.0, this.scene);
-      right.position = new BABYLON.Vector3(12.5,6.25,0);
-      right.rotation.y = Math.PI/2;
-      right.scaling.x = 2;
-      right.scaling.y = 0.5;
-      right.material = this.backmaterial;
+      let right = new TWall(back.height, ground.height, this.scene);
+      right.setPosition(ground.width/2, back.height/2, back.getPosition().z - right.width/2);
+      right.rotateY(Math.PI/2);
+      right.setMaterial(wallMaterial);
       this.right = right;
 
       /* Левая стенка */
-      let left = BABYLON.Mesh.CreatePlane("right", 25.0, this.scene);
-      left.position = new BABYLON.Vector3(-12.5,6.25,0);
-      left.rotation.y = -Math.PI/2;
-      left.scaling.x = 2;
-      left.scaling.y = 0.5;
-      left.material = this.backmaterial;
+      let left = new TWall(back.height, ground.height, this.scene);
+      left.setPosition(-ground.width/2, back.height/2, back.getPosition().z - left.width/2);
+      left.rotateY(-Math.PI/2);
+      left.setMaterial(wallMaterial);
       this.left = left;
 
       /* Потолок */
-      let top = BABYLON.Mesh.CreateGround("top", 25, 25, 2, this.scene);
-      top.rotation.x = Math.PI;
-      top.position.y = 12.5;
-      top.scaling.z = 2;
+      let top = new TCeiling(ground.height, ground.width, scene);
+      top.setPosition(ground.getPosition().x, back.height, ground.getPosition().z);
       this.top = top;
+
+      let secFloor = new TFloor(ground.height/3, ground.width/4, scene);
+      secFloor.setPosition(-secFloor.width*1.5, back.height/4, secFloor.height);
+      this.secFloor = secFloor;
 
       /* Лестница */
       //Params for stairs: height, width, length, stairsNum, scene
-      let stairs = new TStairs(4.6, 5, 10, 12, scene);
+      let stairs1 = new TStairs(secFloor.getPosition().y, secFloor.width, secFloor.height/2, 15, this.scene);
       let stairsMaterial = new BABYLON.StandardMaterial("stairsMaterial", this.scene);
       stairsMaterial.diffuseColor = new BABYLON.Color3(0.7, 0.8, 0.7);
-      stairs.setMaterial(stairsMaterial);
-      stairs.setPosition(0,stairs.stairHeight/2,0.4);
-      stairs.rotateY(0);
-      this.stairs = stairs;
+      stairs1.setMaterial(stairsMaterial);
+      stairs1.setPosition(secFloor.getPosition().x, stairs1.stairHeight/2, secFloor.height/2 - stairs1.length + stairs1.stairLength/2);
+      stairs1.rotateY(0);
+      this.stairs1 = stairs1;
 
-      /* Возвышенность */
-      let upstair2 = BABYLON.Mesh.CreatePlane("upstair2", 5.0, this.scene);
-      upstair2.position = new BABYLON.Vector3(0,4.5,17.5);
-      upstair2.rotation.x = Math.PI/2;
-      upstair2.scaling.y = 3;
-      upstair2.scaling.x = 5;
-      this.upstair2 = upstair2;
+      let thirdFloor = new TFloor(ground.height/2, ground.width/4, scene);
+      thirdFloor.setPosition(thirdFloor.width*1.5, back.height*0.6, thirdFloor.height/2);
+      this.thirdFloor = thirdFloor;
 
-      this.ground.checkCollisions = true;
-      this.back.checkCollisions = true;
-      this.left.checkCollisions = true;
-      this.right.checkCollisions = true;
-      this.upstair2.checkCollisions = true;
+      let stairs2 = new TStairs(thirdFloor.getPosition().y - secFloor.getPosition().y, thirdFloor.width, 
+         Math.abs(thirdFloor.getPosition().x - thirdFloor.width/2 - secFloor.getPosition().x - secFloor.width/2), 15, this.scene);
+      stairs2.setMaterial(stairsMaterial);
+      stairs2.setPosition(secFloor.getPosition().x + secFloor.width/2 + stairs2.stairLength/2, secFloor.getPosition().y + stairs2.stairHeight/2,
+       back.getPosition().z - stairs2.width/2);
+      stairs2.rotateY(Math.PI/2);
+      this.stairs2 = stairs2;
    }
    getScene(){
       return this.scene;
