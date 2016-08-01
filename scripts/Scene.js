@@ -26,13 +26,15 @@ class Scene {
       room3.setPosition(-35, 0 , 15);
 
       room1.getLeftWall().addDoor(10, 6, 52, scene);
-      room2.getRightWall().addDoor(10, 6, 12, scene);
+      room2.getRightWall().remove();
 
       room2.getFrontWall().addDoor(10, 6, 32, scene);
-      room3.getBackWall().addDoor(10, 6, 12, scene);
+      room3.getBackWall().remove();
 
       room1.getLeftWall().addDoor(10, 6, 5, scene);
-      room3.getRightWall().addDoor(10, 6, 29,scene);
+      room3.getRightWall().remove();
+
+
 
       let secFloor = new TFloor(room1.getFloor().height/3, room1.getFloor().width/4, scene);
       secFloor.setPosition(-secFloor.width*1.5, room1.getBackWall().height/4, secFloor.height);

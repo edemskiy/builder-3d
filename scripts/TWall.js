@@ -30,6 +30,10 @@ class TWall extends TRigid{
          z: this.getMesh(0).position.z
       }
    }
+   remove(){
+      if(this.meshArr.length === 1)
+         this.getMesh(0).dispose();
+   }
    addDoor(height, width, from, scene){
       if(this.meshArr.length === 1){  //if wall has no doors
          this.setSize(this.height - height, this.width);
