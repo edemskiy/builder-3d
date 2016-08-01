@@ -1,10 +1,10 @@
 class TWall extends TRigid{
-   constructor(height,width,scene){
+   constructor(height, width, scene){
       super(scene);
-      let wall = new BABYLON.Mesh.CreatePlane("wall", height, scene);
-      wall.scaling.x = width/height;
+      let wall = BABYLON.MeshBuilder.CreateBox("wall", {height: height, width: width, depth: 0.5}, scene);
       wall.checkCollisions = this.collision;
-      wall.size = height;
+      wall.height = height;
+      wall.width = width;
       this.addMesh(wall);
       this.height = height;
       this.width = width;
@@ -20,8 +20,8 @@ class TWall extends TRigid{
       this.rotation = alpha;
    }
    setSize(height, width){
-      this.getMesh(0).scaling.y = height/this.getMesh(0).size;
-      this.getMesh(0).scaling.x = width/this.getMesh(0).size;
+      this.getMesh(0).scaling.y = height/this.getMesh(0).height;
+      this.getMesh(0).scaling.x = width/this.getMesh(0).width;
    }
    getPosition(){
       return {
@@ -31,32 +31,35 @@ class TWall extends TRigid{
       }
    }
    addDoor(height, width, from, scene){
-      this.setSize(this.height - height, this.width);
-      let currPos = this.getPosition();
-      this.setPosition(currPos.x, currPos.y + height/2, currPos.z);
+      if(this.meshArr.length === 1){  //if wall has no doors
+         this.setSize(this.height - height, this.width);
+         let currPos = this.getPosition();
+         this.setPosition(currPos.x, currPos.y + height/2, currPos.z);
       
-      let leftWall = new BABYLON.Mesh.CreatePlane("leftWall", height, scene);
-      leftWall.scaling.x = from/height;
-      leftWall.rotation.y = this.rotation;
+         let leftWall = new TWall(height, from, scene);
+         leftWall.rotateY(this.rotation);
 
-      let rightWall = new BABYLON.Mesh.CreatePlane("rightWall", height, scene);
-      rightWall.width = this.width - from - width;
-      rightWall.scaling.x = rightWall.width/height;
-      rightWall.rotation.y = this.rotation;
+         let rightWall = new TWall(height, this.width - from - width, scene);
+         rightWall.rotateY(this.rotation);
 
-      leftWall.position = new BABYLON.Vector3(currPos.x - Math.cos(this.rotation) * (this.width/2 - from/2), 
-         currPos.y - this.height/2 + height/2,
-         currPos.z - Math.sin(this.rotation) * (this.width/2 - from/2));
-      
-      rightWall.position = new BABYLON.Vector3(leftWall.position.x + (from/2 + width + rightWall.width/2) * Math.cos(this.rotation), //position.x
-         currPos.y - this.height/2 + height/2, // position.y
-         leftWall.position.z + (from/2 + width + rightWall.width/2) * Math.sin(this.rotation)); // position.z
+         leftWall.setPosition(currPos.x - Math.cos(this.rotation) * (this.width/2 - from/2), 
+            currPos.y - this.height/2 + height/2,
+            currPos.z - Math.sin(this.rotation) * (this.width/2 - from/2));
 
-      leftWall.material = rightWall.material = this.material;
+         rightWall.setPosition(leftWall.getPosition().x + (from/2 + width + rightWall.width/2) * Math.cos(this.rotation),
+            currPos.y - this.height/2 + height/2,
+            leftWall.getPosition().z + (from/2 + width + rightWall.width/2) * Math.sin(this.rotation));
 
-      leftWall.checkCollisions = rightWall.checkCollisions = this.collision;
+         leftWall.setMaterial(this.material);
+         rightWall.setMaterial(this.material);
 
-      this.meshArr.push(leftWall);
-      this.meshArr.push(rightWall);
+         this.meshArr.push(leftWall);
+         this.meshArr.push(rightWall);
+      }
+      if(from + width < this.getMesh(1).width)
+         this.getMesh(1).addDoor(height, width, from, scene);
+
+      if(from > this.width - this.getMesh(2).width)
+         this.getMesh(2).addDoor(height, width, from - (this.width - this.getMesh(2).width), scene);
    }
 };
