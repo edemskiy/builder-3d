@@ -9,6 +9,16 @@ class TWall extends TRigid{
       this.height = height;
       this.width = width;
       this.rotation = 0;
+      
+      let gridArr = new Array(Math.floor(height));
+      for(let i = 0; i < height; i++)
+         gridArr[i] = new Array(Math.floor(width));
+      
+      for(let i = 0; i < height; i++) {
+         for(let j = 0; j < width; j++)
+            gridArr[i][j] = 0;
+      }
+      this.gridArr = gridArr;
    }
    setPosition(x, y, z){
       if(this.meshArr.length === 1){
@@ -34,53 +44,40 @@ class TWall extends TRigid{
       if(this.meshArr.length === 1)
          this.getMesh(0).dispose();
    }
-   /* На одну стену можно добавить несколько окон, только если они одной высоты и находятся на одном уровне. */
    addWindow(height, width, xPos, yPos, scene){
-      if(this.meshArr.length === 1){
-         let currPos = this.getPosition();
-         
-         this.setSize(this.height - height - yPos, this.width);
-         this.setPosition(currPos.x, currPos.y + this.height/2 - (this.height - height - yPos)/2 , currPos.z);
+      let freeSpace = 0;
+      let currPos = this.getPosition();
 
-         let leftWall = new TWall(height, xPos, scene);
-         leftWall.rotateY(this.rotation);
+      for(let i = this.height - yPos - height; i < this.height - yPos; i++)
+         for(let j = xPos; j < width + xPos; j++)
+            if(this.gridArr[i][j])
+               return;
+      
+      let window = BABYLON.MeshBuilder.CreateBox("window", {height: height, width: width, depth: 0.5}, scene);
+      window.rotation.y = this.rotation;
 
-         let rightWall = new TWall(height, this.width - xPos - width, scene);
-         rightWall.rotateY(this.rotation);
+      window.position = new BABYLON.Vector3(currPos.x - (this.width/2 - width/2 - xPos)*Math.cos(-this.rotation),
+         currPos.y - this.height/2 + height/2 + yPos,
+         currPos.z - (this.width/2 - width/2 - xPos)*Math.sin(-this.rotation));
 
-         leftWall.setPosition(currPos.x - Math.cos(this.rotation) * (this.width/2 - xPos/2), 
-            currPos.y - this.height/2 + height/2 + yPos,
-            currPos.z + Math.sin(this.rotation) * (this.width/2 - xPos/2));
+      let windowCSG = BABYLON.CSG.FromMesh(window);
+      let wallCSG = BABYLON.CSG.FromMesh(this.getMesh(0));
 
-         rightWall.setPosition(leftWall.getPosition().x + (xPos/2 + width + rightWall.width/2) * Math.cos(this.rotation),
-            currPos.y - this.height/2 + height/2 + yPos,
-            leftWall.getPosition().z - (xPos/2 + width + rightWall.width/2) * Math.sin(this.rotation));
+      let newWall = wallCSG.subtract(windowCSG);
+      
+      this.remove();
+      window.dispose();
+      window = null;
+      
+      this.meshArr.pop();
+      let newMeshWall = newWall.toMesh("wall", this.material, scene);
+      newMeshWall.checkCollisions = this.collision;
+      this.addMesh(newMeshWall);
 
-         leftWall.setMaterial(this.material);
-         rightWall.setMaterial(this.material);
-
-         this.addMesh(leftWall);
-         this.addMesh(rightWall);
-
-         if(yPos !== 0){
-            let bottomWall = new TWall(yPos, this.width, scene);
-            bottomWall.rotateY(this.rotation);
-            bottomWall.setPosition(currPos.x, currPos.y - this.height/2 + yPos/2, currPos.z);
-            bottomWall.setMaterial(this.material);
-            this.addMesh(bottomWall);
-         }
-      }
-      if(xPos + width < this.getMesh(1).width && height <= this.getMesh(1).height)
-         this.getMesh(1).addWindow(height + 1, width, xPos, 0, scene);
-
-      if(xPos > this.width - this.getMesh(2).width && height <= this.getMesh(2).height)
-         this.getMesh(2).addWindow(height + 1, width, xPos - (this.width - this.getMesh(2).width), 0, scene);
-
-      if(this.getMesh(3) !== undefined && height + yPos < this.getMesh(3).height)
-         this.getMesh(3).addWindow(height, width, xPos, 0, scene);
+      for(let i = this.height - yPos - height; i < this.height - yPos; i++)
+         for(let j = xPos; j < width + xPos; j++)
+            this.gridArr[i][j] = 1;
    }
-   /* На стену с окнами можно добавить двери, только если они одной высоты и не выше нижней рамки окон.
-      Двери добавляются только после окон, но не наоборот */
    addDoor(height, width, xPos, scene){
       this.addWindow(height, width, xPos, 0, scene);
    }

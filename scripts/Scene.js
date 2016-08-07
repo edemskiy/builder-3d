@@ -18,6 +18,7 @@ class Scene {
       let light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, -1), this.scene);
       light1.intensity = .75;
 
+      
       let room1 = new TRoom(25, 40, 70, this.scene);
       let room2 = new TRoom(25, 50, 30, this.scene);
       let room3 = new TRoom(25, 30, 40, this.scene);
@@ -25,8 +26,8 @@ class Scene {
       room2.setPosition(-45, 0, -20);
       room3.setPosition(-35, 0 , 15);
 
+      
       room1.getLeftWall().addDoor(10, 6, 7, this.scene);
-      room1.getLeftWall().addDoor(10, 6, 55, this.scene);
       room2.getRightWall().remove();
 
       room2.getFrontWall().addDoor(10, 6, 32, this.scene);
@@ -35,16 +36,14 @@ class Scene {
       room1.getLeftWall().addDoor(10, 6, 50, this.scene);
       room3.getRightWall().remove();
 
-      room1.getRightWall().addWindow(4, 7, 10, 18, this.scene);
+      room1.getRightWall().addWindow(4, 4, 10, 18, this.scene);
       room1.getRightWall().addWindow(4, 4, 20, 18, this.scene);
       room1.getRightWall().addWindow(4, 4, 30, 18, this.scene);
-      room1.getRightWall().addDoor(10, 6, 40, this.scene);
-
+      
       let secFloor = new TFloor(room1.getFloor().height/3, room1.getFloor().width/4, this.scene);
       secFloor.setPosition(-secFloor.width*1.5, room1.getBackWall().height/4, secFloor.height);
       this.secFloor = secFloor;
 
-      /* Stairs */
       //Params for stairs: height, width, length, stairsNum, scene
       let stairs1 = new TStairs(secFloor.getPosition().y, secFloor.width, secFloor.height/2, Math.round(secFloor.getPosition().y*1.5), this.scene);
       stairs1.setPosition(secFloor.getPosition().x, stairs1.stairHeight/2 + 0.25, secFloor.height/2 - stairs1.length + stairs1.stairLength/2);
