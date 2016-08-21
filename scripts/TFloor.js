@@ -1,6 +1,6 @@
 class TFloor extends TWall{
-   constructor(height, width, scene){
-      super(height, width, scene);
+   constructor(height, width, name, scene){
+      super(height, width, name, scene);
       this.getMesh(0).rotation.x = Math.PI/2;
    }
 };

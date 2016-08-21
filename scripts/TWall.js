@@ -1,10 +1,9 @@
 class TWall extends TRigid{
-   constructor(height, width, scene){
+   constructor(height, width, name, scene){
       super(scene);
-      let wall = BABYLON.MeshBuilder.CreateBox("wall", {height: height, width: width, depth: 0.5}, scene);
+      let wall = BABYLON.MeshBuilder.CreateBox(name, {height: height, width: width, depth: 0.5}, scene);
       wall.checkCollisions = this.collision;
-      wall.height = height;
-      wall.width = width;
+      this.name = name;
       this.addMesh(wall);
       this.height = height;
       this.width = width;
@@ -45,7 +44,6 @@ class TWall extends TRigid{
          this.getMesh(0).dispose();
    }
    addWindow(height, width, xPos, yPos, scene){
-      let freeSpace = 0;
       let currPos = this.getPosition();
 
       for(let i = this.height - yPos - height; i < this.height - yPos; i++)
@@ -55,10 +53,10 @@ class TWall extends TRigid{
       
       let window = BABYLON.MeshBuilder.CreateBox("window", {height: height, width: width, depth: 0.5}, scene);
       window.rotation.y = this.rotation;
-
-      window.position = new BABYLON.Vector3(currPos.x - (this.width/2 - width/2 - xPos)*Math.cos(-this.rotation),
+      
+      window.position = new BABYLON.Vector3(currPos.x - (this.width/2 - width/2 - xPos)*Math.cos(this.rotation),
          currPos.y - this.height/2 + height/2 + yPos,
-         currPos.z - (this.width/2 - width/2 - xPos)*Math.sin(-this.rotation));
+         currPos.z - (this.width/2 - width/2 - xPos)*Math.sin(this.rotation));
 
       let windowCSG = BABYLON.CSG.FromMesh(window);
       let wallCSG = BABYLON.CSG.FromMesh(this.getMesh(0));
@@ -70,7 +68,7 @@ class TWall extends TRigid{
       window = null;
       
       this.meshArr.pop();
-      let newMeshWall = newWall.toMesh("wall", this.material, scene);
+      let newMeshWall = newWall.toMesh(this.name, this.material, scene);
       newMeshWall.checkCollisions = this.collision;
       this.addMesh(newMeshWall);
 
