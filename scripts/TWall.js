@@ -28,10 +28,6 @@ class TWall extends TRigid{
       this.getMesh(0).rotation.y = alpha;
       this.rotation = alpha;
    }
-   setSize(height, width){
-      this.getMesh(0).scaling.y = height/this.getMesh(0).height;
-      this.getMesh(0).scaling.x = width/this.getMesh(0).width;
-   }
    getPosition(){
       return {
          x: this.getMesh(0).position.x,
@@ -44,19 +40,23 @@ class TWall extends TRigid{
          this.getMesh(0).dispose();
    }
    addWindow(height, width, xPos, yPos, scene){
-      let currPos = this.getPosition();
+      let currentPosition = this.getPosition();
 
-      for(let i = this.height - yPos - height; i < this.height - yPos; i++)
-         for(let j = xPos; j < width + xPos; j++)
+      if (xPos < width/2 + 1 || yPos < height/2  || this.width - xPos < width/2 + 1 || this.height - yPos < height/2 + 1) {
+         return;
+      }
+
+      for(let i = Math.floor(this.height - yPos - height/2 - 1); i < this.height - yPos + height/2; i++)
+         for(let j = Math.floor(xPos - width/2 - 1); j < width/2 + xPos + 1; j++)
             if(this.gridArr[i][j])
                return;
       
+      this.getMesh(0).rotation.y = 0;
       let window = BABYLON.MeshBuilder.CreateBox("window", {height: height, width: width, depth: 0.5}, scene);
-      window.rotation.y = this.rotation;
       
-      window.position = new BABYLON.Vector3(currPos.x - (this.width/2 - width/2 - xPos)*Math.cos(this.rotation),
-         currPos.y - this.height/2 + height/2 + yPos,
-         currPos.z - (this.width/2 - width/2 - xPos)*Math.sin(this.rotation));
+      window.position = new BABYLON.Vector3(currentPosition.x - this.width/2 + xPos,
+         currentPosition.y - this.height/2  + yPos,
+         currentPosition.z);
 
       let windowCSG = BABYLON.CSG.FromMesh(window);
       let wallCSG = BABYLON.CSG.FromMesh(this.getMesh(0));
@@ -72,11 +72,14 @@ class TWall extends TRigid{
       newMeshWall.checkCollisions = this.collision;
       this.addMesh(newMeshWall);
 
-      for(let i = this.height - yPos - height; i < this.height - yPos; i++)
-         for(let j = xPos; j < width + xPos; j++)
+      this.rotateY(this.rotation);
+      for(let i = this.height - yPos - height/2; i < this.height - yPos + height/2; i++)
+         for(let j = xPos - width/2; j < width/2 + xPos; j++)
             this.gridArr[i][j] = 1;
+
+      
    }
    addDoor(height, width, xPos, scene){
-      this.addWindow(height, width, xPos, 0, scene);
+      this.addWindow(height, width, xPos, height/2, scene);
    }
 };

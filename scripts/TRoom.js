@@ -11,25 +11,24 @@ class TRoom extends TRigid{
       this.floor = floor;
 
       /* Back wall */
-      let back = new TWall(height, floor.width, name + ":back", scene);  
+      let backWall = new TWall(height, floor.width, name + ":backWall", scene);  
       let wallMaterial = new BABYLON.StandardMaterial("wallMaterial", scene);
       wallMaterial.diffuseColor = new BABYLON.Color3(0.85, 0.85, 1);
-      //back.rotateY(Math.PI);
-      this.back = back;
+      this.backWall = backWall;
 
       /* Front wall */
-      let front = new TWall(height, floor.width, name + ":front", scene);
-      this.front = front;
+      let frontWall = new TWall(height, floor.width, name + ":frontWall", scene);
+      this.frontWall = frontWall;
 
       /* Right wall */
-      let right = new TWall(back.height, floor.height, name + ":right", scene);
-      right.rotateY(Math.PI/2);
-      this.right = right;
+      let rightWall = new TWall(backWall.height, floor.height, name + ":rightWall", scene);
+      rightWall.rotateY(-Math.PI/2);
+      this.rightWall = rightWall;
 
       /* Left wall */
-      let left = new TWall(back.height, floor.height, name + ":left", scene);
-      left.rotateY(Math.PI/2);      
-      this.left = left;
+      let leftWall = new TWall(backWall.height, floor.height, name + ":leftWall", scene);
+      leftWall.rotateY(-Math.PI/2);      
+      this.leftWall = leftWall;
 
       /* Ceiling */
       let ceiling = new TCeiling(floor.height, floor.width, name + ":ceiling", scene);
@@ -40,26 +39,26 @@ class TRoom extends TRigid{
 
       this.meshArr[0] = {
          "floor": this.floor,
-         "front": this.front,
-         "right": this.right,
-         "back": this.back,
-         "left": this.left,
+         "frontWall": this.frontWall,
+         "rightWall": this.rightWall,
+         "backWall": this.backWall,
+         "leftWall": this.leftWall,
          "ceiling": ceiling
       };
    }
    setPosition(x, y , z){
       this.floor.setPosition(x, y, z);
-      this.back.setPosition(this.floor.getPosition().x, this.floor.getPosition().y + this.back.height/2, this.floor.getPosition().z - this.floor.height/2);
-      this.front.setPosition(this.floor.getPosition().x, this.floor.getPosition().y + this.front.height/2, this.floor.getPosition().z + this.floor.height/2); 
-      this.right.setPosition(this.floor.getPosition().x + this.floor.width/2, this.floor.getPosition().y + this.back.height/2, this.back.getPosition().z + this.right.width/2);
-      this.left.setPosition(this.floor.getPosition().x - this.floor.width/2, this.floor.getPosition().y + this.back.height/2, this.back.getPosition().z + this.left.width/2);
-      this.ceiling.setPosition(this.floor.getPosition().x, this.floor.getPosition().y + this.back.height, this.floor.getPosition().z);
+      this.backWall.setPosition(this.floor.getPosition().x, this.floor.getPosition().y + this.backWall.height/2, this.floor.getPosition().z - this.floor.height/2);
+      this.frontWall.setPosition(this.floor.getPosition().x, this.floor.getPosition().y + this.frontWall.height/2, this.floor.getPosition().z + this.floor.height/2); 
+      this.rightWall.setPosition(this.floor.getPosition().x + this.floor.width/2, this.floor.getPosition().y + this.backWall.height/2, this.backWall.getPosition().z + this.rightWall.width/2);
+      this.leftWall.setPosition(this.floor.getPosition().x - this.floor.width/2, this.floor.getPosition().y + this.backWall.height/2, this.backWall.getPosition().z + this.leftWall.width/2);
+      this.ceiling.setPosition(this.floor.getPosition().x, this.floor.getPosition().y + this.backWall.height, this.floor.getPosition().z);
    }
    setWallMaterial(material){
-      this.left.setMaterial(material);
-      this.right.setMaterial(material);
-      this.front.setMaterial(material);
-      this.back.setMaterial(material);
+      this.leftWall.setMaterial(material);
+      this.rightWall.setMaterial(material);
+      this.frontWall.setMaterial(material);
+      this.backWall.setMaterial(material);
    }
    getFloor(){
       return this.floor;
@@ -68,16 +67,16 @@ class TRoom extends TRigid{
       return this.ceiling;
    }
    getLeftWall(){
-      return this.left;
+      return this.leftWall;
    }
    getRightWall(){
-      return this.right;
+      return this.rightWall;
    }
    getFrontWall(){
-      return this.front;
+      return this.frontWall;
    }
    getBackWall(){
-      return this.back;
+      return this.backWall;
    }
    getName(){
       return this.name;
