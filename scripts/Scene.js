@@ -40,40 +40,9 @@ class Scene {
       room3.getRightWall().remove();
 
       let constrAddWindow = new TConstruct("window", this, {height: 4, width: 4});
-      //let constrAddDoor = new TConstruct("door", {height: 10, width: 6},this);
+      //let constrAddDoor = new TConstruct("door", this, {height: 10, width: 6});
 
       
-      //---------------------------------------------------------------------------------------
-      // let secFloor = new TFloor(room1.getFloor().height/3, room1.getFloor().width/4, "secFloor", this.scene);
-      // secFloor.setPosition(-secFloor.width*1.5, room1.getBackWall().height/4, secFloor.height);
-      // this.secFloor = secFloor;
-
-      // //Params for stairs: height, width, length, stairsNum, scene
-      // let stairs1 = new TStairs(secFloor.getPosition().y, secFloor.width, secFloor.height/2, Math.round(secFloor.getPosition().y*1.5), this.scene);
-      // stairs1.setPosition(secFloor.getPosition().x, stairs1.stairHeight/2 + 0.25, secFloor.height/2 - stairs1.length + stairs1.stairLength/2);
-      // stairs1.rotateY(0);
-
-      // let stairsMaterial = new BABYLON.StandardMaterial("stairsMaterial", this.scene);
-      // stairsMaterial.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5);
-      // stairs1.setMaterial(stairsMaterial);
-      
-      // this.stairs1 = stairs1;
-
-      // let thirdFloor = new TFloor(room1.getFloor().height/2, room1.getFloor().width/4, "thirdFloor", this.scene);
-      // thirdFloor.setPosition(thirdFloor.width*1.5, room1.getBackWall().height*0.6, thirdFloor.height/2);
-      // this.thirdFloor = thirdFloor;
-
-      // let stairs2 = new TStairs(thirdFloor.getPosition().y - secFloor.getPosition().y, thirdFloor.width, 
-      //    Math.abs(thirdFloor.getPosition().x - thirdFloor.width/2 - secFloor.getPosition().x - secFloor.width/2),
-      //    Math.round( (thirdFloor.getPosition().y - secFloor.getPosition().y)*1.5 ), this.scene);
-
-      // stairs2.setPosition(secFloor.getPosition().x + secFloor.width/2 + stairs2.stairLength/2, secFloor.getPosition().y + stairs2.stairHeight/2 + 0.25,
-      //     room1.getFrontWall().getPosition().z - stairs2.width/2);
-      
-      // stairs2.rotateY(Math.PI/2);
-      // stairs2.setMaterial(stairsMaterial);
-      // this.stairs2 = stairs2;
-
       //---------------------------------------------------------------------------------------
 
       // this.scene.onPointerObservable.add ((evt) => {
@@ -88,19 +57,6 @@ class Scene {
       // }, BABYLON.PointerEventTypes.POINTERMOVE);
 
       //---------------------------------------------------------------------------------------
-
-      // let wallMaterial = new BABYLON.StandardMaterial("wallMaterial", this.scene);
-      // wallMaterial.diffuseColor = new BABYLON.Color3(0.85, 0.85, 1);
-      // let wall = BABYLON.MeshBuilder.CreateBox("wall", {height: 12, width: 12, depth: 0.5}, this.scene);
-      // let window = BABYLON.MeshBuilder.CreateBox("window", {height: 4, width: 4, depth: 0.5}, this.scene);
-      // wall.rotation.y += 0.5;
-      // window.rotation.y += 0.5;
-      // let windowCSG = BABYLON.CSG.FromMesh(window);
-      // let wallCSG = BABYLON.CSG.FromMesh(wall);
-      // let newWall = wallCSG.subtract(windowCSG);
-      // wall.dispose();
-      // window.dispose();
-      // let newMeshWall = newWall.toMesh("name", this.mat, this.scene);   
       }
       getScene(){
       return this.scene;

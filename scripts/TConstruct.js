@@ -39,7 +39,7 @@ class TConstruct{
 	}
 	exit(scene){
 		for(let key in this){
-			console.log(scene.onPointerObservable.remove(this[key]));
+			scene.onPointerObservable.remove(this[key]);
 		}
 	}
 }
