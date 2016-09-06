@@ -1,7 +1,7 @@
 class TWall extends TRigid{
    constructor(height, width, name, scene){
       super(scene);
-      let wall = BABYLON.MeshBuilder.CreateBox(name, {height: height, width: width, depth: 0.5}, scene);
+      let wall = BABYLON.MeshBuilder.CreateBox(name, {height: height, width: width, depth: 0.5, updateble: true}, scene);
       wall.checkCollisions = this.collision;
       this.name = name;
       this.addMesh(wall);
@@ -41,13 +41,18 @@ class TWall extends TRigid{
    }
    addWindow(height, width, xPos, yPos, scene){
       let currentPosition = this.getPosition();
+      if(width%2 !== 0){ xPos -= 0.5};
+      if(height%2 !== 0){ yPos -= 0.5};
+      
+      let doorCheck = 1;
+      if(yPos === height/2){ doorCheck = 0}; 
 
-      if (xPos < width/2 + 1 || yPos < height/2  || this.width - xPos < width/2 + 1 || this.height - yPos < height/2 + 1) {
+      if (xPos < width/2 + 1 || yPos < height/2 + doorCheck || this.width - xPos < width/2 + 1 || this.height - yPos < height/2 + 1) {
          return;
       }
 
-      for(let i = Math.floor(this.height - yPos - height/2 - 1); i < this.height - yPos + height/2; i++)
-         for(let j = Math.floor(xPos - width/2 - 1); j < width/2 + xPos + 1; j++)
+      for(let i = this.height - yPos - height/2 - 1; i < this.height - yPos + height/2 + doorCheck; i++)
+         for(let j = xPos - width/2 - 1; j < width/2 + xPos + 1; j++)
             if(this.gridArr[i][j])
                return;
       
@@ -67,7 +72,7 @@ class TWall extends TRigid{
       window.dispose();
       window = null;
       
-      this.meshArr.pop();
+      this.meshArr.shift();
       let newMeshWall = newWall.toMesh(this.name, this.material, scene);
       newMeshWall.checkCollisions = this.collision;
       this.addMesh(newMeshWall);

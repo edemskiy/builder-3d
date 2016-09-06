@@ -3,10 +3,13 @@ class TRoom extends TRigid{
       super(scene);
       this.name = name;
 
+      
+
       /* Floor */      
       let floor = new TFloor(length, width, name + ":floor", scene);
       let floorMaterial = new BABYLON.StandardMaterial("floorMaterial", scene);
       floorMaterial.diffuseColor = new BABYLON.Color3(1, 0.85, 0.62);
+      //floorMaterial.diffuseTexture = new BABYLON.Texture("textures/floor.jpg", scene);
       floor.setMaterial(floorMaterial);
       this.floor = floor;
 
@@ -14,6 +17,7 @@ class TRoom extends TRigid{
       let backWall = new TWall(height, floor.width, name + ":backWall", scene);  
       let wallMaterial = new BABYLON.StandardMaterial("wallMaterial", scene);
       wallMaterial.diffuseColor = new BABYLON.Color3(0.85, 0.85, 1);
+      //wallMaterial.diffuseTexture = new BABYLON.Texture("textures/wall.jpg", scene);
       this.backWall = backWall;
 
       /* Front wall */

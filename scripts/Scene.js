@@ -39,16 +39,48 @@ class Scene {
       room1.getLeftWall().addDoor(10, 6, 50, this.scene);
       room3.getRightWall().remove();
 
-      let constrAddWindow = new TConstruct("window", this, {height: 4, width: 4});
-      //let constrAddDoor = new TConstruct("door", this, {height: 10, width: 6});
+      let elementsData = [{name: "window", height: 4, width: 4},
+           {name: "door", height: 10, width: 6}];
+      let newObjectsElement = [];
 
-      
+      for(let i = 0; i < elementsData.length; i++){
+           let objectElement = new TConstruct(elementsData[i].name, {height: elementsData[i].height, width: elementsData[i].width});
+           newObjectsElement.push(objectElement);
+      }
+      let activeObjectElement = "window";
+
+      this.addObjectObserver = this.scene.onPointerObservable.add ((evt) => {
+
+           if(evt.pickInfo.pickedMesh === null)
+               return;
+
+           let arr = evt.pickInfo.pickedMesh.name.split(":");
+           if(arr.length > 1) {
+               let pickedWall = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
+
+               if (pickedWall.getMesh(0).rotation.x)
+                   return;
+
+               let currentPosition = pickedWall.getPosition();
+               let pickedPoint = evt.pickInfo.pickedPoint;
+               for(let i = 0; i < elementsData.length; i++){
+                   if(newObjectsElement[i].name === activeObjectElement){
+                       newObjectsElement[i].add(pickedWall, currentPosition, pickedPoint, this.scene);
+                       break;
+                   }
+               }
+           }
+
+          //constrAddWindow.createObject();
+
+      }, BABYLON.PointerEventTypes.POINTERDOWN);
+
+           
       //---------------------------------------------------------------------------------------
 
       // this.scene.onPointerObservable.add ((evt) => {
       //    let myObjMesh = scene.pick(scene.pointerX, scene.pointerY);
       //    let arr = myObjMesh.pickedMesh.name.split(":");
-
       //    if(arr.length > 1){
       //       let wall = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
       //       let currPos = wall.getPosition();
@@ -59,6 +91,6 @@ class Scene {
       //---------------------------------------------------------------------------------------
       }
       getScene(){
-      return this.scene;
+        return this.scene;
       }
 }
