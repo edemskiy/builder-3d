@@ -27,26 +27,12 @@ class Scene {
          "room3" : room3
       };
 
-      room2.setPosition(-45, 0, -20);
-      room3.setPosition(-35, 0 , 15);
+      room2.setPosition(-45, 110, -20);
+      room3.setPosition(-35, 110 , 15);
       
-      room1.getLeftWall().addDoor(10, 6, 10, this.scene);
-      room2.getRightWall().remove();
+      let elementsData = [new TWindow(3, 3, 0.5, this.scene),
+      new TDoor(10, 6, 0.5, this.scene)];
 
-      room2.getFrontWall().addDoor(10, 6, 32, this.scene);
-      room3.getBackWall().remove();
-
-      room1.getLeftWall().addDoor(10, 6, 50, this.scene);
-      room3.getRightWall().remove();
-
-      let elementsData = [{name: "window", height: 4, width: 4},
-           {name: "door", height: 10, width: 6}];
-      let newObjectsElement = [];
-
-      for(let i = 0; i < elementsData.length; i++){
-           let objectElement = new TConstruct(elementsData[i].name, {height: elementsData[i].height, width: elementsData[i].width});
-           newObjectsElement.push(objectElement);
-      }
       let activeObjectElement = "window";
 
       this.addObjectObserver = this.scene.onPointerObservable.add ((evt) => {
@@ -64,15 +50,13 @@ class Scene {
                let currentPosition = pickedWall.getPosition();
                let pickedPoint = evt.pickInfo.pickedPoint;
                for(let i = 0; i < elementsData.length; i++){
-                   if(newObjectsElement[i].name === activeObjectElement){
-                       newObjectsElement[i].add(pickedWall, currentPosition, pickedPoint, this.scene);
+                   if(elementsData[i].name === activeObjectElement){
+                       //new TConstruct(pickedWall, currentPosition, pickedPoint, elementsData[i], "difference");
+                       new TConstruct(pickedWall, currentPosition, pickedPoint, elementsData[i], "union");
                        break;
                    }
                }
            }
-
-          //constrAddWindow.createObject();
-
       }, BABYLON.PointerEventTypes.POINTERDOWN);
 
            

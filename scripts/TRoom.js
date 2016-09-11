@@ -2,11 +2,10 @@ class TRoom extends TRigid{
    constructor(height, width, length, name, scene){
       super(scene);
       this.name = name;
-
-      
+      let depth = 0.5;      
 
       /* Floor */      
-      let floor = new TFloor(length, width, name + ":floor", scene);
+      let floor = new TFloor(length, width, depth, name + ":floor", scene);
       let floorMaterial = new BABYLON.StandardMaterial("floorMaterial", scene);
       floorMaterial.diffuseColor = new BABYLON.Color3(1, 0.85, 0.62);
       //floorMaterial.diffuseTexture = new BABYLON.Texture("textures/floor.jpg", scene);
@@ -14,28 +13,28 @@ class TRoom extends TRigid{
       this.floor = floor;
 
       /* Back wall */
-      let backWall = new TWall(height, floor.width, name + ":backWall", scene);  
+      let backWall = new TWall(height, floor.width, depth, name + ":backWall", scene);  
       let wallMaterial = new BABYLON.StandardMaterial("wallMaterial", scene);
       wallMaterial.diffuseColor = new BABYLON.Color3(0.85, 0.85, 1);
       //wallMaterial.diffuseTexture = new BABYLON.Texture("textures/wall.jpg", scene);
       this.backWall = backWall;
 
       /* Front wall */
-      let frontWall = new TWall(height, floor.width, name + ":frontWall", scene);
+      let frontWall = new TWall(height, floor.width, depth, name + ":frontWall", scene);
       this.frontWall = frontWall;
 
       /* Right wall */
-      let rightWall = new TWall(backWall.height, floor.height, name + ":rightWall", scene);
+      let rightWall = new TWall(backWall.height, floor.height, depth, name + ":rightWall", scene);
       rightWall.rotateY(-Math.PI/2);
       this.rightWall = rightWall;
 
       /* Left wall */
-      let leftWall = new TWall(backWall.height, floor.height, name + ":leftWall", scene);
+      let leftWall = new TWall(backWall.height, floor.height, depth, name + ":leftWall", scene);
       leftWall.rotateY(-Math.PI/2);      
       this.leftWall = leftWall;
 
       /* Ceiling */
-      let ceiling = new TCeiling(floor.height, floor.width, name + ":ceiling", scene);
+      let ceiling = new TCeiling(floor.height, floor.width, depth, name + ":ceiling", scene);
       this.ceiling = ceiling;
 
       this.setPosition(0, 0, 0);
@@ -47,7 +46,7 @@ class TRoom extends TRigid{
          "rightWall": this.rightWall,
          "backWall": this.backWall,
          "leftWall": this.leftWall,
-         "ceiling": ceiling
+         "ceiling": this.ceiling
       };
    }
    setPosition(x, y , z){
