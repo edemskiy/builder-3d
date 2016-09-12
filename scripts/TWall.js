@@ -43,8 +43,6 @@ class TWall extends TRigid{
    }
    addObject(addingObject, xPos, yPos, addingMode){
       
-      let currentPosition = this.getPosition();
-      
       if(addingObject.width%2 !== 0){ xPos -= 0.5};
       if(addingObject.height%2 !== 0){ yPos -= 0.5};
       
@@ -59,8 +57,12 @@ class TWall extends TRigid{
          for(let j = xPos - addingObject.width/2 - 1; j < addingObject.width/2 + xPos + 1; j++)
             if(this.gridArr[i][j])
                return;
-      
+
+      let currentPosition = this.getPosition();
+
+      /* Поворот для предотвращения изменения освещения */
       this.getMesh(0).rotation.y = 0;
+      /* ----------------- ??? ----------------- */
 
       addingObject.createObject();
       addingObject.getObject().position = new BABYLON.Vector3(currentPosition.x - this.width/2 + xPos,
@@ -69,26 +71,31 @@ class TWall extends TRigid{
 
       let addingObjectCSG = BABYLON.CSG.FromMesh(addingObject.getObject());
       let wallCSG = BABYLON.CSG.FromMesh(this.getMesh(0));
-      let newWall;
+      let newWall = wallCSG.subtract(addingObjectCSG);
 
       switch(addingMode){
          case "difference": 
-            newWall = wallCSG.subtract(addingObjectCSG);
+            addingObject.getObject().dispose();
             break;
-         case "union":
-            newWall = wallCSG.union(addingObjectCSG);
+         case "union":            
             break;
       }
 
       this.remove();
-      addingObject.getObject().dispose();
       
       this.meshArr.shift();
       let newMeshWall = newWall.toMesh(this.name, this.material, this.scene);
       newMeshWall.checkCollisions = this.collision;
       this.addMesh(newMeshWall);
 
+      /* Обратный разворот */
       this.rotateY(this.rotation);
+      addingObject.getObject().position = new BABYLON.Vector3(currentPosition.x - (this.width/2 - xPos)*Math.cos(-this.rotation),
+        currentPosition.y - this.height/2 + yPos,
+        currentPosition.z - (this.width/2  - xPos)*Math.sin(-this.rotation));
+      addingObject.getObject().rotation.y = this.rotation;
+      /* ------------------------------ ??? ------------------------------------ */
+
       for(let i = this.height - yPos - addingObject.height/2; i < this.height - yPos + addingObject.height/2; i++)
          for(let j = xPos - addingObject.width/2; j < addingObject.width/2 + xPos; j++)
             this.gridArr[i][j] = 1;

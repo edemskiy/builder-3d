@@ -27,10 +27,10 @@ class Scene {
          "room3" : room3
       };
 
-      room2.setPosition(-45, 110, -20);
-      room3.setPosition(-35, 110 , 15);
+      room2.setPosition(-45, 50, -20);
+      room3.setPosition(-35, 50, 15);
       
-      let elementsData = [new TWindow(3, 3, 0.5, this.scene),
+      let elementsData = [new TWindow(4, 4, 0.5, this.scene),
       new TDoor(10, 6, 0.5, this.scene)];
 
       let activeObjectElement = "window";
@@ -51,8 +51,8 @@ class Scene {
                let pickedPoint = evt.pickInfo.pickedPoint;
                for(let i = 0; i < elementsData.length; i++){
                    if(elementsData[i].name === activeObjectElement){
-                       //new TConstruct(pickedWall, currentPosition, pickedPoint, elementsData[i], "difference");
-                       new TConstruct(pickedWall, currentPosition, pickedPoint, elementsData[i], "union");
+                       new TConstruct(pickedWall, currentPosition, pickedPoint, elementsData[i], "difference");
+                       //new TConstruct(pickedWall, currentPosition, pickedPoint, elementsData[i], "union");
                        break;
                    }
                }
