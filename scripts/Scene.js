@@ -33,7 +33,7 @@ class Scene {
       let elementsData = [new TWindow(4, 4, 0.5, this.scene),
       new TDoor(10, 6, 0.5, this.scene)];
 
-      let activeObjectElement = "window";
+      let activeObjectElement = "TWindow";
 
       this.addObjectObserver = this.scene.onPointerObservable.add ((evt) => {
 
@@ -51,8 +51,8 @@ class Scene {
                let pickedPoint = evt.pickInfo.pickedPoint;
                for(let i = 0; i < elementsData.length; i++){
                    if(elementsData[i].name === activeObjectElement){
-                       new TConstruct(pickedWall, currentPosition, pickedPoint, elementsData[i], "difference");
-                       //new TConstruct(pickedWall, currentPosition, pickedPoint, elementsData[i], "union");
+                       new TConstruct(pickedWall, currentPosition, pickedPoint, elementsData[i]);
+                       //new TConstruct(pickedWall, currentPosition, pickedPoint, elementsData[i]);
                        break;
                    }
                }

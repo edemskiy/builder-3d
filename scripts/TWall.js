@@ -41,7 +41,7 @@ class TWall extends TRigid{
       if(this.meshArr.length === 1)
          this.getMesh(0).dispose();
    }
-   addObject(addingObject, xPos, yPos, addingMode){
+   addObject(addingObject, xPos, yPos){
       
       if(addingObject.width%2 !== 0){ xPos -= 0.5};
       if(addingObject.height%2 !== 0){ yPos -= 0.5};
@@ -73,7 +73,7 @@ class TWall extends TRigid{
       let wallCSG = BABYLON.CSG.FromMesh(this.getMesh(0));
       let newWall = wallCSG.subtract(addingObjectCSG);
 
-      switch(addingMode){
+      switch(addingObject.addingMode){
          case "difference": 
             addingObject.getObject().dispose();
             break;
