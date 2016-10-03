@@ -1,10 +1,10 @@
 class TStairs extends TRigid{
-   constructor(height, width, length, stairsNum, scene){
-      super(scene);
+   constructor(height, width, length, stairsNum){
+      super();
       let stairHeight = height/stairsNum;
       let stairLength = length/stairsNum;
       for(let i = 0; i < stairsNum; i++){
-         let tmp = new BABYLON.Mesh.CreateBox("stair" + i, stairHeight, scene);
+         let tmp = new BABYLON.Mesh.CreateBox("stair" + i, stairHeight, map.getScene());
          tmp.scaling.x = width/stairHeight;
          tmp.scaling.z = stairLength/stairHeight;
          tmp.position = new BABYLON.Vector3(0, i*stairHeight, i*stairLength);

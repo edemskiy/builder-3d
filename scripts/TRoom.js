@@ -1,40 +1,40 @@
 class TRoom extends TRigid{
-   constructor(height, width, length, name, scene){
-      super(scene);
+   constructor(height, width, length, name){
+      super();
       this.name = name;
       let depth = 0.5;      
 
       /* Floor */      
-      let floor = new TFloor(length, width, depth, name + ":floor", scene);
-      let floorMaterial = new BABYLON.StandardMaterial("floorMaterial", scene);
+      let floor = new TFloor(length, width, depth, name + ":floor");
+      let floorMaterial = new BABYLON.StandardMaterial("floorMaterial", map.getScene());
       floorMaterial.diffuseColor = new BABYLON.Color3(1, 0.85, 0.62);
       //floorMaterial.diffuseTexture = new BABYLON.Texture("textures/floor.jpg", scene);
       floor.setMaterial(floorMaterial);
       this.floor = floor;
 
       /* Back wall */
-      let backWall = new TWall(height, floor.width, depth, name + ":backWall", scene);  
-      let wallMaterial = new BABYLON.StandardMaterial("wallMaterial", scene);
+      let backWall = new TWall(height, floor.width, depth, name + ":backWall");  
+      let wallMaterial = new BABYLON.StandardMaterial("wallMaterial", map.getScene());
       wallMaterial.diffuseColor = new BABYLON.Color3(0.85, 0.85, 1);
       //wallMaterial.diffuseTexture = new BABYLON.Texture("textures/wall.jpg", scene);
       this.backWall = backWall;
 
       /* Front wall */
-      let frontWall = new TWall(height, floor.width, depth, name + ":frontWall", scene);
+      let frontWall = new TWall(height, floor.width, depth, name + ":frontWall");
       this.frontWall = frontWall;
 
       /* Right wall */
-      let rightWall = new TWall(backWall.height, floor.height, depth, name + ":rightWall", scene);
+      let rightWall = new TWall(backWall.height, floor.height, depth, name + ":rightWall");
       rightWall.rotateY(-Math.PI/2);
       this.rightWall = rightWall;
 
       /* Left wall */
-      let leftWall = new TWall(backWall.height, floor.height, depth, name + ":leftWall", scene);
+      let leftWall = new TWall(backWall.height, floor.height, depth, name + ":leftWall");
       leftWall.rotateY(-Math.PI/2);      
       this.leftWall = leftWall;
 
       /* Ceiling */
-      let ceiling = new TCeiling(floor.height, floor.width, depth, name + ":ceiling", scene);
+      let ceiling = new TCeiling(floor.height, floor.width, depth, name + ":ceiling");
       this.ceiling = ceiling;
 
       this.setPosition(0, 0, 0);

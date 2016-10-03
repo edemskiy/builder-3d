@@ -1,9 +1,10 @@
 class TRigid extends TObject{
-   constructor(scene){
+   constructor(){
       super();
-      let material = new BABYLON.StandardMaterial("material", scene);
+      let material = new BABYLON.StandardMaterial("material", map.getScene());
       this.material = material;
       this.collision = true;
+      this.addingMode = "union";
    }
    setMaterial(material){
       for(let i = 0; i < this.meshArr.length; i++){

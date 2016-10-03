@@ -21,7 +21,12 @@
       <script src="scripts/babylon/hand.js"></script>
       <script src="scripts/babylon/cannon.js"></script>
      
-         <!-- Подключение классов -->
+         
+      
+   </head>
+   <body>
+      <canvas id="renderCanvas"></canvas>
+      <!-- Подключение классов -->
       <script src="scripts/Map.js"></script>
       <script src="scripts/Scene.js"></script>
       <script src="scripts/TObject.js"></script>
@@ -35,13 +40,6 @@
       <script src="scripts/TCutout.js"></script>
       <script src="scripts/TWindow.js"></script>
       <script src="scripts/TDoor.js"></script>
-   </head>
-   <body>
-      <canvas id="renderCanvas"></canvas>
-      <script type="text/javascript">
-         let canvas = document.querySelector("#renderCanvas");
-         let map = new Map(canvas);
-         map.runRenderLoop();
-      </script>
+      <script src="scripts/main.js"></script>
    </body>
 </html>

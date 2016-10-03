@@ -5,7 +5,8 @@ class Scene {
       scene.collisionsEnabled = true;
       scene.gravity = new BABYLON.Vector3(0, -2, 0);
       this.scene = scene;
-      
+    }
+    createScene(){
       let camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(15, 5, -20), this.scene);
       camera.setTarget(BABYLON.Vector3.Zero());
       camera.attachControl(canvas, false);
@@ -17,64 +18,55 @@ class Scene {
       let light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, -1), this.scene);
       light1.intensity = .75;
 
-      let room1 = new TRoom(25, 40, 70, "room1", this.scene);
-      let room2 = new TRoom(25, 50, 30, "room2", this.scene);
-      let room3 = new TRoom(25, 30, 40, "room3", this.scene);
+      let room1 = new TRoom(25, 40, 70, "room1");
+      let room2 = new TRoom(25, 50, 30, "room2");
+      let room3 = new TRoom(25, 30, 40, "room3");
 
       this.roomsArr = {
-         "room1" : room1,
-         "room2" : room2,
-         "room3" : room3
+       "room1" : room1,
+       "room2" : room2,
+       "room3" : room3
       };
 
       room2.setPosition(-45, 50, -20);
       room3.setPosition(-35, 50, 15);
-      
-      let elementsData = [new TWindow(4, 4, 0.5, this.scene),
-      new TDoor(10, 6, 0.5, this.scene)];
+
+      let elementsData = ["TWindow", "TDoor"];
 
       let activeObjectElement = "TWindow";
 
       this.addObjectObserver = this.scene.onPointerObservable.add ((evt) => {
 
-           if(evt.pickInfo.pickedMesh === null)
-               return;
+        if(evt.pickInfo.pickedMesh === null)
+          return;
 
-           let arr = evt.pickInfo.pickedMesh.name.split(":");
-           if(arr.length > 1) {
-               let pickedWall = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
+        let arr = evt.pickInfo.pickedMesh.name.split(":");
+        if(arr.length > 1) {
+          let pickedWall = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
+            
+          if (pickedWall.getMesh(0).rotation.x)
+            return;
+            
+          let pickedPoint = evt.pickInfo.pickedPoint;
+          let currentPosition = pickedWall.getPosition();
 
-               if (pickedWall.getMesh(0).rotation.x)
-                   return;
+          let objPosition = {
+            x: Math.floor(pickedPoint.x) - currentPosition.x + pickedWall.width/2,
+            y: currentPosition.y - pickedWall.height/2 + Math.floor(pickedPoint.y),
+            z: Math.floor(pickedPoint.z) - currentPosition.z + pickedWall.width/2
+          };
 
-               let currentPosition = pickedWall.getPosition();
-               let pickedPoint = evt.pickInfo.pickedPoint;
-               for(let i = 0; i < elementsData.length; i++){
-                   if(elementsData[i].name === activeObjectElement){
-                       new TConstruct(pickedWall, currentPosition, pickedPoint, elementsData[i]);
-                       //new TConstruct(pickedWall, currentPosition, pickedPoint, elementsData[i]);
-                       break;
-                   }
-               }
-           }
+          for(let i = 0; i < elementsData.length; i++){
+            if(elementsData[i] === activeObjectElement){
+              //new TConstruct(pickedWall, TDoor, {height: 10, width: 6, depth: 0.5, position: objPosition});
+              new TConstruct(pickedWall, TWindow, {height: 4, width: 4, depth: 0.5, position: objPosition});
+              break;
+            }
+          }
+        }
       }, BABYLON.PointerEventTypes.POINTERDOWN);
-
-           
-      //---------------------------------------------------------------------------------------
-
-      // this.scene.onPointerObservable.add ((evt) => {
-      //    let myObjMesh = scene.pick(scene.pointerX, scene.pointerY);
-      //    let arr = myObjMesh.pickedMesh.name.split(":");
-      //    if(arr.length > 1){
-      //       let wall = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
-      //       let currPos = wall.getPosition();
-      //       let point = myObjMesh.pickedPoint;      
-      //    }
-      // }, BABYLON.PointerEventTypes.POINTERMOVE);
-
-      //---------------------------------------------------------------------------------------
-      }
-      getScene(){
-        return this.scene;
-      }
+    }
+    getScene(){
+      return this.scene;
+    }
 }

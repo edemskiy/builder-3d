@@ -1,8 +1,8 @@
 class TWall extends TRigid{
-   constructor(height, width, depth, name, scene){
-      super(scene);
-      this.scene = scene;
-      let wall = BABYLON.MeshBuilder.CreateBox(name, {height: height, width: width, depth: depth, updateble: true}, this.scene);
+   constructor(height, width, depth, name){
+      super();
+
+      let wall = BABYLON.MeshBuilder.CreateBox(name, {height: height, width: width, depth: depth, updateble: true}, map.getScene());
       wall.checkCollisions = this.collision;
       this.name = name;
       this.addMesh(wall);
@@ -10,6 +10,8 @@ class TWall extends TRigid{
       this.width = width;
       this.depth = depth;
       this.rotation = 0;
+
+      //console.log(map);
       
       let gridArr = new Array(Math.floor(height));
       for(let i = 0; i < height; i++)
@@ -84,7 +86,7 @@ class TWall extends TRigid{
       this.remove();
       
       this.meshArr.shift();
-      let newMeshWall = newWall.toMesh(this.name, this.material, this.scene);
+      let newMeshWall = newWall.toMesh(this.name, this.material, map.getScene());
       newMeshWall.checkCollisions = this.collision;
       this.addMesh(newMeshWall);
 
@@ -98,8 +100,6 @@ class TWall extends TRigid{
 
       for(let i = this.height - yPos - addingObject.height/2; i < this.height - yPos + addingObject.height/2; i++)
          for(let j = xPos - addingObject.width/2; j < addingObject.width/2 + xPos; j++)
-            this.gridArr[i][j] = 1;
-
-      
+            this.gridArr[i][j] = 1;      
    }
 };

@@ -1,8 +1,8 @@
 class TWindow extends TCutout{
-	constructor(height, width, depth, scene){
-		super(height, width, depth, "TWindow", scene)
+	constructor(options){
+		super(options)
 	}
 	createObject(){
-		this.cutObject = BABYLON.MeshBuilder.CreateBox(name, {height: this.height, width: this.width, depth: this.depth, updateble: true}, this.scene);
+		this.cutObject = BABYLON.MeshBuilder.CreateBox(name, {height: this.height, width: this.width, depth: this.depth, updateble: true}, map.getScene());
 	}
 }
