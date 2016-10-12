@@ -31,9 +31,10 @@ class Scene {
       room2.setPosition(-45, 50, -20);
       room3.setPosition(-35, 50, 15);
 
-      let elementsData = ["TWindow", "TDoor"];
+      let elementsData = [TWindow, TDoor];
+      console.log(elementsData);
 
-      let activeObjectElement = "TWindow";
+      let activeObjectElement = TWindow;
 
       this.addObjectObserver = this.scene.onPointerObservable.add ((evt) => {
 
@@ -58,8 +59,7 @@ class Scene {
 
           for(let i = 0; i < elementsData.length; i++){
             if(elementsData[i] === activeObjectElement){
-              //new TConstruct(pickedWall, TDoor, {height: 10, width: 6, depth: 0.5, position: objPosition});
-              new TConstruct(pickedWall, TWindow, {height: 4, width: 4, depth: 0.5, position: objPosition});
+              new TConstruct(pickedWall, activeObjectElement, {height: 4, width: 4, depth: 0.5, position: objPosition});
               break;
             }
           }
