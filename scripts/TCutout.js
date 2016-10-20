@@ -7,11 +7,12 @@ class TCutout extends TRigid{
 		this.depth = options.depth;
 		this.cutObject = null;
 		this.addingMode = "difference";
+		
 		this.position = {
-			x: options.position.x,
-			y: options.position.y,
-			z: options.position.z
-		};
+				x: options.position.x,
+				y: options.position.y,
+				z: options.position.z
+			};
 	}
 	getObject(){
 		return this.cutObject;

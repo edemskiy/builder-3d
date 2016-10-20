@@ -4,7 +4,9 @@ class Scene {
       scene.clearColor = new BABYLON.Color3(1, 1, 1);
       scene.collisionsEnabled = true;
       scene.gravity = new BABYLON.Vector3(0, -2, 0);
+
       this.scene = scene;
+      
     }
     createScene(){
       let camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(15, 5, -20), this.scene);
@@ -19,22 +21,22 @@ class Scene {
       light1.intensity = .75;
 
       let room1 = new TRoom(25, 40, 70, "room1");
-      let room2 = new TRoom(25, 50, 30, "room2");
-      let room3 = new TRoom(25, 30, 40, "room3");
+      //let room2 = new TRoom(25, 50, 30, "room2");
+      //let room3 = new TRoom(25, 30, 40, "room3");
 
       this.roomsArr = {
-       "room1" : room1,
-       "room2" : room2,
-       "room3" : room3
+       "room1" : room1
+       //"room2" : room2,
+       //"room3" : room3
       };
 
-      room2.setPosition(-45, 50, -20);
-      room3.setPosition(-35, 50, 15);
+      //room2.setPosition(-45, 50, -20);
+      //room3.setPosition(-35, 50, 15);
 
-      let elementsData = [TWindow, TDoor];
-      console.log(elementsData);
 
-      let activeObjectElement = TWindow;
+      let elementsData = [TWindow, TDoor, T3DObject];
+
+      let activeObjectElement = T3DObject;
 
       this.addObjectObserver = this.scene.onPointerObservable.add ((evt) => {
 
@@ -47,10 +49,8 @@ class Scene {
             
           if (pickedWall.getMesh(0).rotation.x)
             return;
-            
           let pickedPoint = evt.pickInfo.pickedPoint;
           let currentPosition = pickedWall.getPosition();
-
           let objPosition = {
             x: Math.floor(pickedPoint.x) - currentPosition.x + pickedWall.width/2,
             y: currentPosition.y - pickedWall.height/2 + Math.floor(pickedPoint.y),
@@ -59,7 +59,7 @@ class Scene {
 
           for(let i = 0; i < elementsData.length; i++){
             if(elementsData[i] === activeObjectElement){
-              new TConstruct(pickedWall, activeObjectElement, {height: 4, width: 4, depth: 0.5, position: objPosition});
+              new TConstruct(pickedWall, activeObjectElement, {name: "window", height: 4, width: 4, depth: 0.5, position: objPosition});
               break;
             }
           }

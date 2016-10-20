@@ -12,10 +12,12 @@ class TRoom extends TRigid{
       floor.setMaterial(floorMaterial);
       this.floor = floor;
 
+
       /* Back wall */
       let backWall = new TWall(height, floor.width, depth, name + ":backWall");  
       let wallMaterial = new BABYLON.StandardMaterial("wallMaterial", map.getScene());
       wallMaterial.diffuseColor = new BABYLON.Color3(0.85, 0.85, 1);
+      backWall.rotateY(Math.PI);
       //wallMaterial.diffuseTexture = new BABYLON.Texture("textures/wall.jpg", scene);
       this.backWall = backWall;
 
@@ -25,7 +27,7 @@ class TRoom extends TRigid{
 
       /* Right wall */
       let rightWall = new TWall(backWall.height, floor.height, depth, name + ":rightWall");
-      rightWall.rotateY(-Math.PI/2);
+      rightWall.rotateY(Math.PI/2);
       this.rightWall = rightWall;
 
       /* Left wall */
