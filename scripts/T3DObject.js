@@ -4,7 +4,8 @@ class T3DObject extends TRigid{
 		BABYLON.SceneLoader.ImportMesh("", "scenes/", options.name + ".babylon", map.getScene(), (newMeshes) => {
 			
 			this.mesh = map.getScene().meshes[map.getScene().meshes.length - 1];
-			
+			this.mesh.name = options.name;
+			this.mesh.checkCollisions = this.collision;
 			var size = this.mesh.getBoundingInfo().boundingBox.extendSize;
 
 			this.mesh.scaling.x = 0.5*options.width/size.x;
@@ -15,12 +16,11 @@ class T3DObject extends TRigid{
 			this.width = options.width;
 			this.depth = options.depth;
 
-			this.position = {
+			this.mesh.position = {
 				x: options.position.x,
 				y: options.position.y,
 				z: options.position.z
 			};
-			
 		});
 	}
 	getObject(){

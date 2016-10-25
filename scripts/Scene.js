@@ -33,12 +33,27 @@ class Scene {
       //room2.setPosition(-45, 50, -20);
       //room3.setPosition(-35, 50, 15);
 
+      console.dir(room1.__proto__.constructor === TRoom);
+
 
       let elementsData = [TWindow, TDoor, T3DObject];
 
       let activeObjectElement = T3DObject;
+      
+      let startingPoint;
+      let currentMesh;
 
       this.addObjectObserver = this.scene.onPointerObservable.add ((evt) => {
+        /*
+        if (evt.pickInfo.pickedMesh.name === "window"){
+          currentMesh = evt.pickInfo.pickedMesh;
+          startingPoint = evt.pickInfo.pickedPoint;
+          setTimeout(function () {
+                    camera.detachControl(map.engine.getRenderingCanvas());
+                }, 0);
+          return;
+        }
+        */
 
         if(evt.pickInfo.pickedMesh === null)
           return;
@@ -47,24 +62,56 @@ class Scene {
         if(arr.length > 1) {
           let pickedWall = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
             
-          if (pickedWall.getMesh(0).rotation.x)
+          if (!pickedWall.__proto__.constructor === TWall)
             return;
           let pickedPoint = evt.pickInfo.pickedPoint;
           let currentPosition = pickedWall.getPosition();
+
+          let c = pickedWall.width/2;
+          let alpha = -pickedWall.getRotationY();
+          let wallLeftPoint = {
+            x: currentPosition.x - c * Math.cos(alpha),
+            y: currentPosition.y,
+            z: currentPosition.z - c * Math.sin(alpha)
+          }
+
+          let xPosition = Math.sqrt((wallLeftPoint.x - pickedPoint.x)*(wallLeftPoint.x - pickedPoint.x) +
+            (wallLeftPoint.z - pickedPoint.z)*(wallLeftPoint.z - pickedPoint.z));
+
           let objPosition = {
-            x: Math.floor(pickedPoint.x) - currentPosition.x + pickedWall.width/2,
-            y: currentPosition.y - pickedWall.height/2 + Math.floor(pickedPoint.y),
-            z: Math.floor(pickedPoint.z) - currentPosition.z + pickedWall.width/2
+            x: wallLeftPoint.x + xPosition * Math.cos(alpha),
+            y: pickedPoint.y,
+            z: wallLeftPoint.z + xPosition * Math.sin(alpha)
           };
 
-          for(let i = 0; i < elementsData.length; i++){
-            if(elementsData[i] === activeObjectElement){
-              new TConstruct(pickedWall, activeObjectElement, {name: "window", height: 4, width: 4, depth: 0.5, position: objPosition});
-              break;
+          elementsData.map((item) => {
+            if(item === activeObjectElement){
+              new TConstruct(pickedWall, activeObjectElement, {name: "window", height: 4, width: 4, depth: 0.5, position: objPosition, xPosition: xPosition});
             }
-          }
+          });
         }
       }, BABYLON.PointerEventTypes.POINTERDOWN);
+      
+      /*
+      this.moveObjectObserver = this.scene.onPointerObservable.add ((evt) => {
+        if (!startingPoint) {
+          return;
+        }
+        let current = evt.pickInfo.pickedPoint;
+        let diff = current.subtract(startingPoint)
+        currentMesh.position.addInPlace(diff);
+        startingPoint = current;
+
+      }, BABYLON.PointerEventTypes.POINTERMOVE);
+
+      this.pointerUpObserver = this.scene.onPointerObservable.add ((evt) => {
+        if (startingPoint) {
+            camera.attachControl(map.engine.getRenderingCanvas(), true);
+            startingPoint = null;
+            return;
+        }
+      }, BABYLON.PointerEventTypes.POINTERUP);
+      */
     }
     getScene(){
       return this.scene;
