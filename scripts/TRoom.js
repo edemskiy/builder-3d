@@ -8,7 +8,7 @@ class TRoom extends TRigid{
       let floor = new TFloor(length, width, depth, name + ":floor");
       let floorMaterial = new BABYLON.StandardMaterial("floorMaterial", map.getScene());
       floorMaterial.diffuseColor = new BABYLON.Color3(1, 0.85, 0.62);
-      //floorMaterial.diffuseTexture = new BABYLON.Texture("textures/floor.jpg", scene);
+      //floorMaterial.diffuseTexture = new BABYLON.Texture("textures/floor.jpg", map.getScene());
       floor.setMaterial(floorMaterial);
       this.floor = floor;
 
@@ -18,7 +18,7 @@ class TRoom extends TRigid{
       let wallMaterial = new BABYLON.StandardMaterial("wallMaterial", map.getScene());
       wallMaterial.diffuseColor = new BABYLON.Color3(0.85, 0.85, 1);
       backWall.rotateY(Math.PI);
-      //wallMaterial.diffuseTexture = new BABYLON.Texture("textures/wall.jpg", scene);
+      //wallMaterial.diffuseTexture = new BABYLON.Texture("textures/wall.jpg", map.getScene());
       this.backWall = backWall;
 
       /* Front wall */
@@ -36,8 +36,8 @@ class TRoom extends TRigid{
       this.leftWall = leftWall;
 
       /* Ceiling */
-      let ceiling = new TCeiling(floor.height, floor.width, depth, name + ":ceiling");
-      this.ceiling = ceiling;
+      // let ceiling = new TCeiling(floor.height, floor.width, depth, name + ":ceiling");
+      // this.ceiling = ceiling;
 
       this.setPosition(0, 0, 0);
       this.setWallMaterial(wallMaterial);
@@ -47,8 +47,8 @@ class TRoom extends TRigid{
          "frontWall": this.frontWall,
          "rightWall": this.rightWall,
          "backWall": this.backWall,
-         "leftWall": this.leftWall,
-         "ceiling": this.ceiling
+         "leftWall": this.leftWall
+         //"ceiling": this.ceiling
       };
    }
    setPosition(x, y , z){
@@ -57,7 +57,7 @@ class TRoom extends TRigid{
       this.frontWall.setPosition(this.floor.getPosition().x, this.floor.getPosition().y + this.frontWall.height/2, this.floor.getPosition().z + this.floor.height/2); 
       this.rightWall.setPosition(this.floor.getPosition().x + this.floor.width/2, this.floor.getPosition().y + this.backWall.height/2, this.backWall.getPosition().z + this.rightWall.width/2);
       this.leftWall.setPosition(this.floor.getPosition().x - this.floor.width/2, this.floor.getPosition().y + this.backWall.height/2, this.backWall.getPosition().z + this.leftWall.width/2);
-      this.ceiling.setPosition(this.floor.getPosition().x, this.floor.getPosition().y + this.backWall.height, this.floor.getPosition().z);
+      //this.ceiling.setPosition(this.floor.getPosition().x, this.floor.getPosition().y + this.backWall.height, this.floor.getPosition().z);
    }
    setWallMaterial(material){
       this.leftWall.setMaterial(material);
@@ -69,7 +69,7 @@ class TRoom extends TRigid{
       return this.floor;
    }
    getCeiling(){
-      return this.ceiling;
+      //return this.ceiling;
    }
    getLeftWall(){
       return this.leftWall;

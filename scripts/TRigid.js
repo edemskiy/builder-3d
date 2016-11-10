@@ -8,9 +8,7 @@ class TRigid extends TObject{
 
    }
    setMaterial(material){
-      for(let i = 0; i < this.meshArr.length; i++){
-         this.getMesh(i).material = this.material = material;
-      }
+      this.getMesh(0).material = this.material = material;
    }
    setSize(height, width, depth){
       var size = newMeshes[0].getBoundingInfo().boundingBox.extendSize;      
@@ -23,5 +21,7 @@ class TRigid extends TObject{
       this.width = width;
       this.depth = depth;
    }
-
+   getClassName(){
+      return this.constructor.name;
+   }
 };

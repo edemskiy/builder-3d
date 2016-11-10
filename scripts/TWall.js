@@ -11,6 +11,8 @@ class TWall extends TRigid{
       this.depth = depth;
       this.rotation = 0;
 
+      this.addMesh({});
+
       
       let gridArr = new Array(Math.floor(height));
       for(let i = 0; i < height; i++)
@@ -23,9 +25,7 @@ class TWall extends TRigid{
       this.gridArr = gridArr;
    }
    setPosition(x, y, z){
-      if(this.meshArr.length === 1){
          this.getMesh(0).position = new BABYLON.Vector3(x,y,z);
-      }
    }
    rotateY(alpha){
       this.getMesh(0).rotation.y = alpha;
@@ -42,7 +42,6 @@ class TWall extends TRigid{
       }
    }
    remove(){
-      if(this.meshArr.length === 1)
          this.getMesh(0).dispose();
    }
    isFreeSpace(options, xPos, yPos){
@@ -65,24 +64,11 @@ class TWall extends TRigid{
    }
    addObject(addingObject, xPos, yPos){
       
-      // if(addingObject.width%2 !== 0){ xPos -= 0.5};
-      // if(addingObject.height%2 !== 0){ yPos -= 0.5};
-            
       let currentPosition = this.getPosition();
-
-      /* Поворот для предотвращения изменения освещения */
-      //this.getMesh(0).rotation.y = 0;
-      /* ----------------- ??? ----------------- */
-
-      // addingObject.getObject().position = new BABYLON.Vector3(currentPosition.x - this.width/2 + xPos,
-      //    currentPosition.y - this.height/2  + yPos,
-      //    currentPosition.z);
 
       let cutout = new TWindow({name: "window", height: addingObject.height, width: addingObject.width,
        depth: addingObject.depth, position: addingObject.getObject().position});
       cutout.createObject();
-      // let cutout = BABYLON.MeshBuilder.CreateBox("cutout", {height: addingObject.height, width: addingObject.width, 
-      //    depth: addingObject.depth, updateble: true}, map.getScene());
       
       let cutoutPos = addingObject.getObject().position;
       cutout.getObject().position = new BABYLON.Vector3(cutoutPos.x, cutoutPos.y, cutoutPos.z);
@@ -97,15 +83,43 @@ class TWall extends TRigid{
 
       this.remove();
       
-      this.meshArr.shift();
       let newMeshWall = newWall.toMesh(this.name, this.material, map.getScene());
-      newMeshWall.checkCollisions = this.collision;
-      this.addMesh(newMeshWall);
+      newMeshWall.checkCollisions = this.collision;            
+      this.meshArr[0] = newMeshWall;
+
+      addingObject.getObject().name = this.name + ":" + addingObject.name;
+
+      this.meshArr[1][addingObject.name] = addingObject;
+
 
       addingObject.getObject().rotation.y = this.rotation;
 
        for(let i = Math.floor(this.height - yPos - addingObject.height/2); i < this.height - yPos + addingObject.height/2; i++)
           for(let j = Math.floor(xPos - addingObject.width/2); j < addingObject.width/2 + xPos; j++)
-             this.gridArr[i][j] = 1;      
+             this.gridArr[i][j] = 1; 
+   }
+   deleteObject(object){
+
+      let currentPosition = this.getPosition();
+
+      let cutout = new TWindow({name: "window", height: object.height, width: object.width,
+       depth: object.depth, position: object.getObject().position});
+      cutout.createObject();
+      let cutoutPos = object.getObject().position;
+      cutout.getObject().position = new BABYLON.Vector3(cutoutPos.x, cutoutPos.y, cutoutPos.z);
+      
+      cutout.getObject().rotation.y = this.rotation;
+
+      let cutoutCSG = BABYLON.CSG.FromMesh(cutout.getObject());
+      let wallCSG = BABYLON.CSG.FromMesh(this.getMesh(0));
+      let newWall = wallCSG.union(cutoutCSG);
+
+
+      cutout.getObject().dispose();
+      this.remove();
+
+      let newMeshWall = newWall.toMesh(this.name, this.material, map.getScene());
+      newMeshWall.checkCollisions = this.collision;            
+      this.meshArr[0] = newMeshWall;
    }
 };
