@@ -1,14 +1,14 @@
-class T3DObject extends TRigid{
-	constructor(options){
+class T3DObject extends TRigid {
+	constructor(options) {
 		super(options);
-		BABYLON.SceneLoader.ImportMesh("", "scenes/", options.name + ".babylon", map.getScene(), (newMeshes) => {
+		BABYLON.SceneLoader.ImportMesh('', 'scenes/', options.name + '.babylon', map.getScene(), (newMeshes) => {
 			
 			this.mesh = map.getScene().meshes[map.getScene().meshes.length - 1];
 			this.mesh.name = options.name + Math.random().toFixed(3) * 1000;
 			this.name = this.mesh.name;
 			this.mesh.checkCollisions = this.collision;
 			this.mesh.showBoundingBox = true;
-			var size = this.mesh.getBoundingInfo().boundingBox.extendSize;
+			const size = this.mesh.getBoundingInfo().boundingBox.extendSize;
 
 			this.mesh.scaling.x = 0.5*options.width/size.x;
 			this.mesh.scaling.y = 0.5*options.height/size.y;
@@ -23,9 +23,11 @@ class T3DObject extends TRigid{
 				y: options.position.y,
 				z: options.position.z
 			};
+			this.addMesh(this.mesh);
 		});
 	}
-	getObject(){
+	
+	getObject() {
 		return this.mesh;
 	}
 }

@@ -1,14 +1,17 @@
-class TObject{
-   constructor(){
+class TObject {
+   constructor() {
       this.meshArr = [];
    }
-   addMesh(mesh){
+
+   addMesh(mesh) {
       this.meshArr.push(mesh);
    }
-   getMesh(n){
+
+   getMesh(n) {
       return this.meshArr[n];
    }
-   getBabylon(){
+
+   getBabylon() {
       return this.meshArr;
    }
 };

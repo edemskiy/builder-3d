@@ -1,18 +1,18 @@
-class TWall extends TRigid{
-   constructor(height, width, depth, name){
+class TWall extends TRigid {
+   constructor(height, width, depth, name) {
       super();
 
-      let wall = BABYLON.MeshBuilder.CreateBox(name, {height: height, width: width, depth: depth, updateble: true}, map.getScene());
+      const wall = BABYLON.MeshBuilder.CreateBox(name, {height: height, width: width, depth: depth, updateble: true}, map.getScene());
       wall.checkCollisions = this.collision;
       this.name = name;
+      wall.material = this.material;
       this.addMesh(wall);
       this.height = height;
       this.width = width;
       this.depth = depth;
       this.rotation = 0;
 
-      this.addMesh({});
-
+      this.addMesh( {} );
       
       let gridArr = new Array(Math.floor(height));
       for(let i = 0; i < height; i++)
@@ -22,33 +22,40 @@ class TWall extends TRigid{
          for(let j = 0; j < width; j++)
             gridArr[i][j] = 0;
       }
+
       this.gridArr = gridArr;
    }
-   setPosition(x, y, z){
+
+   setPosition(x, y, z) {
          this.getMesh(0).position = new BABYLON.Vector3(x,y,z);
    }
-   rotateY(alpha){
+
+   rotateY(alpha) {
       this.getMesh(0).rotation.y = alpha;
       this.rotation = alpha;
    }
-   getRotationY(){
+
+   getRotationY() {
       return this.getMesh(0).rotation.y;
    }
-   getPosition(){
+
+   getPosition() {
       return {
          x: this.getMesh(0).position.x,
          y: this.getMesh(0).position.y,
          z: this.getMesh(0).position.z
       }
    }
-   remove(){
+
+   remove() {
          this.getMesh(0).dispose();
    }
-   isFreeSpace(options, xPos, yPos){
-      if(options.width%2 !== 0){ xPos -= 0.5};
-      if(options.height%2 !== 0){ yPos -= 0.5};
+
+   isFreeSpace(options, xPos, yPos) {
+      if(options.width%2 !== 0) { xPos -= 0.5};
+      if(options.height%2 !== 0) { yPos -= 0.5};
       
-      let doorCheck = (yPos === options.height/2) ? 0 : 1;
+      const doorCheck = (yPos === options.height/2) ? 0 : 1;
 
       if (xPos < options.width/2  || yPos < options.height/2 + doorCheck || 
          this.width - xPos < options.width/2  || this.height - yPos < options.height/2 ) {
@@ -62,32 +69,33 @@ class TWall extends TRigid{
       return true;
 
    }
-   addObject(addingObject, xPos, yPos){
-      
-      let currentPosition = this.getPosition();
 
-      let cutout = new TWindow({name: "window", height: addingObject.height, width: addingObject.width,
+   addObject(addingObject, xPos, yPos) {
+      
+      const currentPosition = this.getPosition();
+
+      const cutout = new TWindow( {name: 'window', height: addingObject.height, width: addingObject.width,
        depth: addingObject.depth, position: addingObject.getObject().position});
       cutout.createObject();
       
-      let cutoutPos = addingObject.getObject().position;
+      const cutoutPos = addingObject.getObject().position;
       cutout.getObject().position = new BABYLON.Vector3(cutoutPos.x, cutoutPos.y, cutoutPos.z);
       
       cutout.getObject().rotation.y = this.rotation;
 
-      let cutoutCSG = BABYLON.CSG.FromMesh(cutout.getObject());
-      let wallCSG = BABYLON.CSG.FromMesh(this.getMesh(0));
-      let newWall = wallCSG.subtract(cutoutCSG);
+      const cutoutCSG = BABYLON.CSG.FromMesh(cutout.getObject());
+      const wallCSG = BABYLON.CSG.FromMesh(this.getMesh(0));
+      const newWall = wallCSG.subtract(cutoutCSG);
 
       cutout.getObject().dispose();
 
       this.remove();
       
-      let newMeshWall = newWall.toMesh(this.name, this.material, map.getScene());
+      const newMeshWall = newWall.toMesh(this.name, this.material, map.getScene());
       newMeshWall.checkCollisions = this.collision;            
       this.meshArr[0] = newMeshWall;
 
-      addingObject.getObject().name = this.name + ":" + addingObject.name;
+      addingObject.getObject().name = this.name + ':' + addingObject.name;
 
       this.meshArr[1][addingObject.name] = addingObject;
 
@@ -98,27 +106,28 @@ class TWall extends TRigid{
           for(let j = Math.floor(xPos - addingObject.width/2); j < addingObject.width/2 + xPos; j++)
              this.gridArr[i][j] = 1; 
    }
-   deleteObject(object){
+   
+   deleteObject(object) {
 
-      let currentPosition = this.getPosition();
+      const currentPosition = this.getPosition();
 
-      let cutout = new TWindow({name: "window", height: object.height, width: object.width,
+      const cutout = new TWindow( {name: 'window', height: object.height, width: object.width,
        depth: object.depth, position: object.getObject().position});
       cutout.createObject();
-      let cutoutPos = object.getObject().position;
+      const cutoutPos = object.getObject().position;
       cutout.getObject().position = new BABYLON.Vector3(cutoutPos.x, cutoutPos.y, cutoutPos.z);
       
       cutout.getObject().rotation.y = this.rotation;
 
-      let cutoutCSG = BABYLON.CSG.FromMesh(cutout.getObject());
-      let wallCSG = BABYLON.CSG.FromMesh(this.getMesh(0));
-      let newWall = wallCSG.union(cutoutCSG);
+      const cutoutCSG = BABYLON.CSG.FromMesh(cutout.getObject());
+      const wallCSG = BABYLON.CSG.FromMesh(this.getMesh(0));
+      const newWall = wallCSG.union(cutoutCSG);
 
 
       cutout.getObject().dispose();
       this.remove();
 
-      let newMeshWall = newWall.toMesh(this.name, this.material, map.getScene());
+      const newMeshWall = newWall.toMesh(this.name, this.material, map.getScene());
       newMeshWall.checkCollisions = this.collision;            
       this.meshArr[0] = newMeshWall;
    }
