@@ -2,35 +2,29 @@ class TRoom extends TRigid {
    constructor(height, width, length, name) {
       super();
       this.name = name;
-      let depth = 0.5;      
+      let depth = 0.5;     
 
-      /* Floor */      
       let floor = new TFloor(length, width, depth, name + ':floor');
       floor.material.diffuseColor = new BABYLON.Color3(1, 0.85, 0.62);
       //floor.material.diffuseTexture = new BABYLON.Texture('textures/floor.jpg', map.getScene());
       this.floor = floor;
-
-      /* Back wall */
+   
       let backWall = new TWall(height, floor.width, depth, name + ':backWall');  
       //backWall.material.diffuseColor = new BABYLON.Color3(0.85, 0.85, 1);
       backWall.rotateY(Math.PI);
       this.backWall = backWall;
-
-      /* Front wall */
+   
       let frontWall = new TWall(height, floor.width, depth, name + ':frontWall');
       this.frontWall = frontWall;
-
-      /* Right wall */
+   
       let rightWall = new TWall(backWall.height, floor.height, depth, name + ':rightWall');
       rightWall.rotateY(Math.PI/2);
       this.rightWall = rightWall;
-
-      /* Left wall */
+   
       let leftWall = new TWall(backWall.height, floor.height, depth, name + ':leftWall');
       leftWall.rotateY(-Math.PI/2);      
       this.leftWall = leftWall;
 
-      /* Ceiling */
       // let ceiling = new TCeiling(floor.height, floor.width, depth, name + ':ceiling');
       // this.ceiling = ceiling;
 

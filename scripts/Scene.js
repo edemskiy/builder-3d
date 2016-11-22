@@ -8,9 +8,9 @@ class Scene {
     }
 
     createScene() {
-      //const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 60, -80), this.scene);
-      let camera = new BABYLON.ArcRotateCamera('RotateCamera', 3 * Math.PI/2, Math.PI/8, 100, BABYLON.Vector3.Zero(),this.scene);
-      camera.setTarget(BABYLON.Vector3.Zero());
+      const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 60, -80), this.scene);
+      //const camera = new BABYLON.ArcRotateCamera('RotateCamera', 3 * Math.PI/2, Math.PI/8, 100, BABYLON.Vector3.Zero(),this.scene);
+      //camera.setTarget(BABYLON.Vector3.Zero());
       camera.attachControl(canvas, false);
       //camera.ellipsoid = new BABYLON.Vector3(1, 2.5, 1);
       camera.checkCollisions = true;
@@ -43,10 +43,11 @@ class Scene {
       skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
       */
 
+
       const room1 = new TRoom(25, 50, 50, 'room1');
 
       this.roomsArr = {
-       'room1' : room1
+       room1
       };
 
       let elementsData = [TWindow, TDoor, T3DObject];
@@ -98,28 +99,12 @@ class Scene {
             return;
 
           const pickedPoint = evt.pickInfo.pickedPoint;
-          const currentPosition = pickedWall.getPosition();
 
-          const c = pickedWall.width/2;
-          const alpha = -pickedWall.getRotationY();
-          const wallLeftPoint = {
-            x: currentPosition.x - c * Math.cos(alpha),
-            y: currentPosition.y,
-            z: currentPosition.z - c * Math.sin(alpha)
-          }
-
-          const xPosition = Math.sqrt((wallLeftPoint.x - pickedPoint.x)*(wallLeftPoint.x - pickedPoint.x) +
-            (wallLeftPoint.z - pickedPoint.z)*(wallLeftPoint.z - pickedPoint.z));
-
-          const objPosition = {
-            x: wallLeftPoint.x + xPosition * Math.cos(alpha),
-            y: pickedPoint.y,
-            z: wallLeftPoint.z + xPosition * Math.sin(alpha)
-          };
+          const { objPosition, xPosition } = pickedWall.getDistanceFromLeft(pickedPoint); 
 
           elementsData.map((item) => {
             if(item === activeObjectElement) {
-              new TConstruct(pickedWall, activeObjectElement, {name: 'window', height: 6, width: 6, depth: 0.5, position: objPosition, xPosition: xPosition});
+              new TConstruct(pickedWall, activeObjectElement, {name: 'window', height: 8, width: 8, depth: 0.5, position: objPosition, xPosition: xPosition});
             }
           });
         }
@@ -133,9 +118,11 @@ class Scene {
 
         const diff = current.subtract(startingPoint);
         //currentMesh.position.addInPlace(diff);
+        
         currentMesh.position.x += diff.x;
         //currentMesh.position.y += diff.y;
         currentMesh.position.z += diff.z;
+        
         this.scene.meshes.map((item) => {
           if (currentMesh.intersectsMesh(item) && currentMesh !== item) {
             const arr = item.name.split(':');
@@ -166,29 +153,20 @@ class Scene {
                   currentMeshObj.getObject().rotation.y = intersectedMesh.getMesh(0).rotation.y;
                   
                   const pickedPoint = currentMesh.position;
-                  const currentPosition = intersectedMesh.getPosition();
+                  const { objPosition, xPosition } = intersectedMesh.getDistanceFromLeft(pickedPoint); 
 
-                  const c = intersectedMesh.width/2;
-                  const alpha = -intersectedMesh.getRotationY();
-                  const wallLeftPoint = {
-                    x: currentPosition.x - c * Math.cos(alpha),
-                    y: currentPosition.y,
-                    z: currentPosition.z - c * Math.sin(alpha)
-                  }
-
-                  const xPosition = Math.sqrt((wallLeftPoint.x - pickedPoint.x)*(wallLeftPoint.x - pickedPoint.x) +
-                    (wallLeftPoint.z - pickedPoint.z)*(wallLeftPoint.z - pickedPoint.z));
-
-                  const objPosition = {
-                    x: wallLeftPoint.x + xPosition * Math.cos(alpha),
-                    y: pickedPoint.y,
-                    z: wallLeftPoint.z + xPosition * Math.sin(alpha)
-                  };
                   currentMesh.position = objPosition;
                   const prevWallNameArr = currentMesh.name.split(':');
                   const prevWall = this.roomsArr[prevWallNameArr[0]].getMesh(0)[prevWallNameArr[1]];
-                  delete prevWall.getMesh(1)[currentMeshObj.name];
-                  intersectedMesh.addObject(currentMeshObj, xPosition, objPosition.y);
+
+                  if (intersectedMesh.isFreeSpace(currentMeshObj, xPosition, objPosition.y)) {
+                    delete prevWall.getMesh(1)[currentMeshObj.name];
+                    intersectedMesh.addObject(currentMeshObj, xPosition, objPosition.y);
+                    
+                  }
+                  else{
+                    isIntersect = false;
+                  }
                 }
               }
               break;
@@ -203,19 +181,7 @@ class Scene {
             const arr = currentMesh.name.split(':');
             const initialWall = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
 
-            const c = initialWall.width/2;
-            const alpha = -initialWall.getRotationY();
-            
-            const currentPosition = initialWall.getPosition();
-            
-            const wallLeftPoint = {
-              x: currentPosition.x - c * Math.cos(alpha),
-              y: currentPosition.y,
-              z: currentPosition.z - c * Math.sin(alpha)
-            }
-
-            const xPosition = Math.sqrt((wallLeftPoint.x - currentMesh.position.x)*(wallLeftPoint.x - currentMesh.position.x) +
-              (wallLeftPoint.z - currentMesh.position.z)*(wallLeftPoint.z - currentMesh.position.z));
+            const { xPosition } = initialWall.getDistanceFromLeft(currentMesh.position); 
             
             initialWall.addObject(currentMeshObj, xPosition, currentMesh.position.y);
 

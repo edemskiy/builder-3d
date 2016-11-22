@@ -1,7 +1,7 @@
 class TConstruct {
 	constructor(pickedWall, addingObjectClass, options) {
-		const xPosition = Math.floor(options.xPosition);
-		const yPosition = Math.floor(options.position.y);
+		const xPosition = options.xPosition;
+		const yPosition = options.position.y;
 
 		if (pickedWall.isFreeSpace(options, xPosition, yPosition)) {
 			const addingObject = new addingObjectClass(options);
