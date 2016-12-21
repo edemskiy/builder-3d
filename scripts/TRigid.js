@@ -8,6 +8,25 @@ class TRigid extends TObject {
 
    }
 
+   getPosition() {
+      return new BABYLON.Vector3(this.getMesh(0).position.x,
+         this.getMesh(0).position.y,
+         this.getMesh(0).position.z);
+   }
+
+   setPosition(x, y, z) {
+         this.getMesh(0).position = new BABYLON.Vector3(x,y,z);
+   }
+
+   rotateY(alpha) {
+      this.getMesh(0).rotation.y = alpha;
+      this.rotation = alpha;
+   }
+
+   getRotationY() {
+      return this.getMesh(0).rotation.y;
+   }
+
    setMaterial(material) {
       this.getMesh(0).material = this.material = material;
    }
@@ -46,6 +65,14 @@ class TRigid extends TObject {
       this.depth = depth;
    }
    
+   rotateAroundPoint(point, alpha){
+      this.rotateY(this.getRotationY() + alpha);
+      const objPosition = this.getPosition();
+      
+      this.getMesh(0).position.x = point.x + (objPosition.x - point.x)*Math.cos(alpha) - (objPosition.z - point.z)*Math.sin(-alpha);
+      this.getMesh(0).position.z = point.z + (objPosition.z - point.z)*Math.cos(alpha) + (objPosition.x - point.x)*Math.sin(-alpha);
+   }
+
    getClassName() {
       return this.constructor.name;
    }

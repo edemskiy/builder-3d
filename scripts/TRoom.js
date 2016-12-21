@@ -15,6 +15,7 @@ class TRoom extends TRigid {
       this.backWall = backWall;
    
       let frontWall = new TWall(height, floor.width, depth, name + ':frontWall');
+      //frontWall.rotateY(Math.PI/4);
       this.frontWall = frontWall;
    
       let rightWall = new TWall(backWall.height, floor.height, depth, name + ':rightWall');

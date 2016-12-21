@@ -27,30 +27,19 @@ class TWall extends TRigid {
 
    }
 
-   setPosition(x, y, z) {
-         this.getMesh(0).position = new BABYLON.Vector3(x,y,z);
-   }
-
-   rotateY(alpha) {
-      this.getMesh(0).rotation.y = alpha;
-      this.rotation = alpha;
-   }
-
-   getRotationY() {
-      return this.getMesh(0).rotation.y;
-   }
-
-   getPosition() {
-      return {
-         x: this.getMesh(0).position.x,
-         y: this.getMesh(0).position.y,
-         z: this.getMesh(0).position.z
-      }
-   }
-
    remove() {
          this.getMesh(0).dispose();
    }
+
+   rotateY(alpha){
+      this.getMesh(0).rotation.y = alpha;
+      this.rotation = alpha;
+
+      for(let key in this.getMesh(1)){
+         this.getMesh(1)[key].rotateAroundPoint(this.getPosition(), alpha);
+      }
+   }
+
    getDistanceFromLeft(pickedPoint){
       const currentPosition = this.getPosition();
 
@@ -66,9 +55,9 @@ class TWall extends TRigid {
          (wallLeftPoint.z - pickedPoint.z)*(wallLeftPoint.z - pickedPoint.z)));
 
       const objPosition = {
-         x: Math.floor(wallLeftPoint.x + xPosition * Math.cos(alpha)),
+         x: (wallLeftPoint.x + xPosition * Math.cos(alpha)),
          y: Math.floor(pickedPoint.y),
-         z: Math.floor(wallLeftPoint.z + xPosition * Math.sin(alpha))
+         z: (wallLeftPoint.z + xPosition * Math.sin(alpha))
       };
       return {objPosition, xPosition};
    }
@@ -169,8 +158,7 @@ class TWall extends TRigid {
          z: currentPosition.z - c * Math.sin(alpha)
       }
 
-      const xPos = Math.floor(Math.sqrt((wallLeftPoint.x - cutoutPos.x)*(wallLeftPoint.x - cutoutPos.x) +
-         (wallLeftPoint.z - cutoutPos.z)*(wallLeftPoint.z - cutoutPos.z)));
+      const xPos = Math.floor(Math.sqrt((wallLeftPoint.x - cutoutPos.x) ** 2 + (wallLeftPoint.z - cutoutPos.z) ** 2));
 
       const yPos = Math.floor(cutoutPos.y);
 

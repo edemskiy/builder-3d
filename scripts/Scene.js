@@ -49,12 +49,12 @@ class Scene {
       this.roomsArr = {
        room1
       };
-
+      
       let elementsData = [TWindow, TDoor, T3DObject];
 
       let activeObjectElement = T3DObject;
       
-      let startingPoint, currentMeshObj, currentMesh, intersectedMesh, beginPosition = {};
+      let startingPoint, currentMeshObj, currentMesh, intersectedMesh, beginPosition, DestinationPoint;
 
       const getGroundPosition = () => {
         let pickinfo = this.scene.pick(this.scene.pointerX, this.scene.pointerY, mesh => (mesh == ground) );
@@ -67,19 +67,21 @@ class Scene {
       this.addObjectObserver = this.scene.onPointerObservable.add ((evt) => {
         if (evt.pickInfo.pickedMesh === null)
           return;
+        if(!evt.pickInfo.pickedMesh.showBoundingBox){
+            return;
+          }
         
-        if (evt.pickInfo.pickedMesh.name.split(':')[2] && evt.pickInfo.pickedMesh.name.split(':')[2].indexOf('window') !== -1){
+        if (evt.pickInfo.pickedMesh.name.includes("window")){
+          
           const pickInfo = this.scene.pick(this.scene.pointerX, this.scene.pointerY, mesh => (mesh !== ground) );
           if (pickInfo.hit) {
             const arr = evt.pickInfo.pickedMesh.name.split(':');
             currentMeshObj = this.roomsArr[arr[0]].getMesh(0)[arr[1]].getMesh(1)[arr[2]];
             currentMesh = currentMeshObj.getObject();
 
-            for (let key in currentMesh.position) {
-              beginPosition[key] = currentMesh.position[key];
-            }
-
+            beginPosition = new BABYLON.Vector3(currentMesh.position.x, currentMesh.position.y, currentMesh.position.z);
             startingPoint = getGroundPosition(evt);
+            
             if (startingPoint){
               setTimeout( () => {
                 camera.detachControl(map.engine.getRenderingCanvas());
@@ -100,7 +102,7 @@ class Scene {
 
           const pickedPoint = evt.pickInfo.pickedPoint;
 
-          const { objPosition, xPosition } = pickedWall.getDistanceFromLeft(pickedPoint); 
+          const { objPosition, xPosition } = pickedWall.getDistanceFromLeft(pickedPoint);
 
           elementsData.map((item) => {
             if(item === activeObjectElement) {
@@ -117,24 +119,33 @@ class Scene {
         if (!current) return;
 
         const diff = current.subtract(startingPoint);
-        //currentMesh.position.addInPlace(diff);
-        
-        currentMesh.position.x += diff.x;
-        //currentMesh.position.y += diff.y;
-        currentMesh.position.z += diff.z;
-        
-        this.scene.meshes.map((item) => {
-          if (currentMesh.intersectsMesh(item) && currentMesh !== item) {
-            const arr = item.name.split(':');
-            if (arr.length > 1) {
-              intersectedMesh = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
-              if (intersectedMesh.getClassName() === 'TWall'){
-                currentMesh.rotation.y = intersectedMesh.getMesh(0).rotation.y;
-              }
-            }
-          }
-        });
 
+        if(currentMesh.name.includes("Wall")){
+          const arr = currentMesh.name.split(':');
+          if (arr.length > 2) {
+            const containingWall = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
+            const alpha = -containingWall.getRotationY();
+            
+            if(alpha % Math.PI === 0){
+              currentMesh.position.x += diff.x;
+              startingPoint = current;
+              return;
+            }
+
+            if(Math.abs(alpha) === Math.PI/2){
+              currentMesh.position.z += diff.z;
+              startingPoint = current;
+              return;
+            }
+
+            const x1 = currentMesh.position.x + diff.x, z1 = currentMesh.position.z + diff.z, x0 = currentMesh.position.x, z0 = currentMesh.position.z;
+            const x = (Math.tan(alpha) * (z1 - z0 + x0 * Math.tan(alpha)) + x1) / (Math.tan(alpha) ** 2 + 1);
+            const z = (Math.tan(alpha) * x + z0 - Math.tan(alpha)*x0);
+
+            currentMesh.position.x = x;
+            currentMesh.position.z = z;
+          }
+        }
         startingPoint = current;
       }, BABYLON.PointerEventTypes.POINTERMOVE);
 
@@ -143,7 +154,7 @@ class Scene {
           let isIntersect = false;
 
           for(let i = 0; i < this.scene.meshes.length; i++) {
-            if (currentMesh.intersectsMesh(this.scene.meshes[i]) && currentMesh !== this.scene.meshes[i]){
+            if (currentMesh.intersectsMesh(this.scene.meshes[i], true) && currentMesh !== this.scene.meshes[i]){
               isIntersect = true;
               const arr = this.scene.meshes[i].name.split(':');
 
@@ -162,6 +173,7 @@ class Scene {
                   if (intersectedMesh.isFreeSpace(currentMeshObj, xPosition, objPosition.y)) {
                     delete prevWall.getMesh(1)[currentMeshObj.name];
                     intersectedMesh.addObject(currentMeshObj, xPosition, objPosition.y);
+                    console.log(intersectedMesh);
                     
                   }
                   else{
@@ -174,9 +186,8 @@ class Scene {
           }
 
           if (!isIntersect) {
-            for (let key in beginPosition) {
-              currentMesh.position[key] = beginPosition[key];
-            }
+
+            currentMesh.position = new BABYLON.Vector3(beginPosition.x, beginPosition.y, beginPosition.z)
 
             const arr = currentMesh.name.split(':');
             const initialWall = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
@@ -184,14 +195,18 @@ class Scene {
             const { xPosition } = initialWall.getDistanceFromLeft(currentMesh.position); 
             
             initialWall.addObject(currentMeshObj, xPosition, currentMesh.position.y);
-
           }
           camera.attachControl(map.engine.getRenderingCanvas(), true);
           startingPoint = null;
           return;
         }
+        else{
+          this.scene.meshes.map((item) => {
+            item.showBoundingBox = false;
+          });
+            evt.pickInfo.pickedMesh.showBoundingBox = true;
+        }
       }, BABYLON.PointerEventTypes.POINTERUP);
-      
     }
 
     getScene() {

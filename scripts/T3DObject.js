@@ -7,7 +7,7 @@ class T3DObject extends TRigid {
 			this.mesh.name = options.name + Math.random().toFixed(3) * 1000;
 			this.name = this.mesh.name;
 			this.mesh.checkCollisions = this.collision;
-			this.mesh.showBoundingBox = true;
+			//this.mesh.showBoundingBox = true;
 			const size = this.mesh.getBoundingInfo().boundingBox.extendSize;
 
 			this.mesh.scaling.x = 0.5*options.width/size.x;
