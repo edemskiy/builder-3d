@@ -30,7 +30,8 @@ class TRoom extends TRigid {
       // this.ceiling = ceiling;
 
       this.setPosition(0, 0, 0);
-      this.setWallTexture('textures/wall.jpg');
+      this.setWallsFrontTexture('textures/wood.jpg');
+      this.setWallsBackTexture('textures/wall.jpg');
 
       this.meshArr[0] = {
          floor,
@@ -51,11 +52,18 @@ class TRoom extends TRigid {
       //this.ceiling.setPosition(this.floor.getPosition().x, this.floor.getPosition().y + this.backWall.height, this.floor.getPosition().z);
    }
 
-   setWallTexture(name) {
-      this.leftWall.setTexture(name);
-      this.rightWall.setTexture(name);
-      this.frontWall.setTexture(name);
-      this.backWall.setTexture(name);
+   setWallsFrontTexture(name) {
+      this.leftWall.setFrontTexture(name);
+      this.rightWall.setFrontTexture(name);
+      this.frontWall.setFrontTexture(name);
+      this.backWall.setFrontTexture(name);
+   }
+
+   setWallsBackTexture(name) {
+      this.leftWall.setBackTexture(name);
+      this.rightWall.setBackTexture(name);
+      this.frontWall.setBackTexture(name);
+      this.backWall.setBackTexture(name);
    }
 
    getFloor() {

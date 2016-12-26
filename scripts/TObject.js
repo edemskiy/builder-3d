@@ -8,6 +8,7 @@ class TObject {
    }
 
    getMesh(n) {
+      n = n || 0;
       return this.meshArr[n];
    }
 

@@ -10,10 +10,10 @@ class Scene {
     createScene() {
       const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 60, -80), this.scene);
       //const camera = new BABYLON.ArcRotateCamera('RotateCamera', 3 * Math.PI/2, Math.PI/8, 100, BABYLON.Vector3.Zero(),this.scene);
-      //camera.setTarget(BABYLON.Vector3.Zero());
+      camera.setTarget(BABYLON.Vector3.Zero());
       camera.attachControl(canvas, false);
       //camera.ellipsoid = new BABYLON.Vector3(1, 2.5, 1);
-      camera.checkCollisions = true;
+      //camera.checkCollisions = true;
       //camera.applyGravity = true;
       this.camera = camera;
 
@@ -28,21 +28,6 @@ class Scene {
       groundMaterial.diffuseTexture.vScale = 350;
       groundMaterial.diffuseColor = new BABYLON.Color3(2,2,2);
       ground.material = groundMaterial;
-
-      /* Infinite Cube */
-      /*
-      let skybox = BABYLON.Mesh.CreateBox('skyBox', 400.0, this.scene);
-      let skyboxMaterial = new BABYLON.StandardMaterial('skyBox', this.scene);
-      skyboxMaterial.backFaceCulling = false;
-      skyboxMaterial.disableLighting = true;
-      skybox.material = skyboxMaterial;
-      skybox.infiniteDistance = true;
-      skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-      skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-      skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture('textures/skybox/skybox', this.scene);
-      skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-      */
-
 
       const room1 = new TRoom(25, 50, 50, 'room1');
 
@@ -67,17 +52,17 @@ class Scene {
       this.addObjectObserver = this.scene.onPointerObservable.add ((evt) => {
         if (evt.pickInfo.pickedMesh === null)
           return;
-        if(!evt.pickInfo.pickedMesh.showBoundingBox){
+
+        if (!evt.pickInfo.pickedMesh.showBoundingBox)
             return;
-          }
         
         if (evt.pickInfo.pickedMesh.name.includes("window")){
           
           const pickInfo = this.scene.pick(this.scene.pointerX, this.scene.pointerY, mesh => (mesh !== ground) );
           if (pickInfo.hit) {
             const arr = evt.pickInfo.pickedMesh.name.split(':');
-            currentMeshObj = this.roomsArr[arr[0]].getMesh(0)[arr[1]].getMesh(1)[arr[2]];
-            currentMesh = currentMeshObj.getObject();
+            currentMeshObj = this.roomsArr[arr[0]].getMesh()[arr[1]].getMesh(1)[arr[2]];
+            currentMesh = currentMeshObj.getMesh();
 
             beginPosition = new BABYLON.Vector3(currentMesh.position.x, currentMesh.position.y, currentMesh.position.z);
             startingPoint = getGroundPosition(evt);
@@ -87,7 +72,7 @@ class Scene {
                 camera.detachControl(map.engine.getRenderingCanvas());
               }, 0);
             }
-            const pickedWall = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
+            const pickedWall = this.roomsArr[arr[0]].getMesh()[arr[1]];
             pickedWall.deleteObject(currentMeshObj);
           }
           return;
@@ -95,7 +80,7 @@ class Scene {
 
         const arr = evt.pickInfo.pickedMesh.name.split(':');
         if (arr.length > 1) {
-          let pickedWall = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
+          let pickedWall = this.roomsArr[arr[0]].getMesh()[arr[1]];
 
           if (pickedWall.getClassName() !== 'TWall')
             return;
@@ -123,7 +108,7 @@ class Scene {
         if(currentMesh.name.includes("Wall")){
           const arr = currentMesh.name.split(':');
           if (arr.length > 2) {
-            const containingWall = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
+            const containingWall = this.roomsArr[arr[0]].getMesh()[arr[1]];
             const alpha = -containingWall.getRotationY();
             
             if(alpha % Math.PI === 0){
@@ -159,22 +144,20 @@ class Scene {
               const arr = this.scene.meshes[i].name.split(':');
 
               if (arr.length > 1) {
-                intersectedMesh = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
+                intersectedMesh = this.roomsArr[arr[0]].getMesh()[arr[1]];
                 if (intersectedMesh.getClassName() === 'TWall'){
-                  currentMeshObj.getObject().rotation.y = intersectedMesh.getMesh(0).rotation.y;
+                  currentMeshObj.getMesh().rotation.y = intersectedMesh.getMesh().rotation.y;
                   
                   const pickedPoint = currentMesh.position;
                   const { objPosition, xPosition } = intersectedMesh.getDistanceFromLeft(pickedPoint); 
 
                   currentMesh.position = objPosition;
                   const prevWallNameArr = currentMesh.name.split(':');
-                  const prevWall = this.roomsArr[prevWallNameArr[0]].getMesh(0)[prevWallNameArr[1]];
+                  const prevWall = this.roomsArr[prevWallNameArr[0]].getMesh()[prevWallNameArr[1]];
 
                   if (intersectedMesh.isFreeSpace(currentMeshObj, xPosition, objPosition.y)) {
                     delete prevWall.getMesh(1)[currentMeshObj.name];
-                    intersectedMesh.addObject(currentMeshObj, xPosition, objPosition.y);
-                    console.log(intersectedMesh);
-                    
+                    intersectedMesh.addObject(currentMeshObj, xPosition, objPosition.y);                    
                   }
                   else{
                     isIntersect = false;
@@ -190,7 +173,7 @@ class Scene {
             currentMesh.position = new BABYLON.Vector3(beginPosition.x, beginPosition.y, beginPosition.z)
 
             const arr = currentMesh.name.split(':');
-            const initialWall = this.roomsArr[arr[0]].getMesh(0)[arr[1]];
+            const initialWall = this.roomsArr[arr[0]].getMesh()[arr[1]];
 
             const { xPosition } = initialWall.getDistanceFromLeft(currentMesh.position); 
             
