@@ -3,32 +3,19 @@
    <head>
       <meta charset="utf-8">
       <title>My Scene</title>
-      <style>
-         html, body {
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-         }
-         #renderCanvas {
-            width: 100%;
-            height: 100%;
-            touch-action: none;
-         }
-      </style>
 
-      <!-- <script src="scripts/babylon/babylon.js"></script>
-      <script src="scripts/babylon/hand.js"></script>
-      <script src="scripts/babylon/cannon.js"></script> -->
+      <link href="css/style.css" rel="stylesheet">
       <script src="scripts/babylon/babylon.custom.js"></script>
-     
-         
       
    </head>
    <body>
       
       <canvas id="renderCanvas"></canvas>
+      <div class="main">
+         <button class="btn" id="pickObjects">Выделить объекты</button>
+         <button class="btn hidden" id="makeGroup">Сгруппировать</button>
+         <button class="btn hidden" id="unGroup">Разгруппировать</button>
+      </div>
       <!-- Подключение классов -->
       <script src="scripts/Map.js"></script>
       <script src="scripts/Scene.js"></script>
@@ -36,6 +23,7 @@
       <script src="scripts/TRigid.js"></script>
       <script src="scripts/T3DObject.js"></script>
       <script src="scripts/TWall.js"></script>
+      <script src="scripts/TGroup.js"></script>
       <script src="scripts/TStairs.js"></script>
       <script src="scripts/TFloor.js"></script>
       <script src="scripts/TCeiling.js"></script>

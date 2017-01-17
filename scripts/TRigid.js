@@ -5,7 +5,7 @@ class TRigid extends TObject {
       this.material = material;
       this.collision = true;
       this.addingMode = 'union';
-
+      this.isPicked = false;
    }
 
    getPosition() {
@@ -51,6 +51,31 @@ class TRigid extends TObject {
 
    offsetTextureY(offset) {
       this.getMesh().material.subMaterials[1].diffuseTexture.vOffset -= offset;
+   }
+
+   pick(){
+      if (this.isPicked) return;
+      
+      this.isPicked = true;
+      const size = this.getMesh().getBoundingInfo().boundingBox.extendSize;
+      this.wrapMesh = BABYLON.MeshBuilder.CreateBox(this.name + "Wrap", {height: size.y*2 + 0.3, width: size.x*2 + 0.3, depth: size.z*2 + 0.3, updateble: true}, map.getScene());
+
+      this.wrapMesh.getObject = () => this.getMesh().getObject();
+      
+      const wrapMeshMaterial = new BABYLON.StandardMaterial('wrapMaterial', map.getScene());
+      wrapMeshMaterial.wireframe = true;
+      wrapMeshMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);
+      this.wrapMesh.material = wrapMeshMaterial;
+
+      this.wrapMesh.parent = this.getMesh();
+   }
+
+   unpick(){
+      if(!this.isPicked) return;
+
+      this.isPicked = false;
+      if(this.wrapMesh)
+         this.wrapMesh.dispose();
    }
 
    setSize(height, width, depth) {

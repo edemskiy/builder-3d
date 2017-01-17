@@ -6,16 +6,13 @@ class TRoom extends TRigid {
 
       let floor = new TFloor(length, width, depth, name + ':floor');
       floor.material.diffuseColor = new BABYLON.Color3(1, 0.85, 0.62);
-      //floor.material.diffuseTexture = new BABYLON.Texture('textures/floor.jpg', map.getScene());
       this.floor = floor;
    
       let backWall = new TWall(height, floor.width, depth, name + ':backWall');  
-      //backWall.material.diffuseColor = new BABYLON.Color3(0.85, 0.85, 1);
       backWall.rotateY(Math.PI);
       this.backWall = backWall;
    
       let frontWall = new TWall(height, floor.width, depth, name + ':frontWall');
-      //frontWall.rotateY(Math.PI/4);
       this.frontWall = frontWall;
    
       let rightWall = new TWall(backWall.height, floor.height, depth, name + ':rightWall');
@@ -30,7 +27,7 @@ class TRoom extends TRigid {
       // this.ceiling = ceiling;
 
       this.setPosition(0, 0, 0);
-      this.setWallsFrontTexture('textures/wood.jpg');
+      this.setWallsFrontTexture('textures/wall.jpg');
       this.setWallsBackTexture('textures/wall.jpg');
 
       this.meshArr[0] = {

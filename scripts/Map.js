@@ -14,6 +14,10 @@ class Map {
          this.scene.getScene().render();
       });
    }
+
+   getSceneObject(){
+      return this.scene;
+   }
    
    getScene() {
       return this.scene.getScene();

@@ -27,7 +27,8 @@ class TWall extends TRigid {
       wall.material = multi;
       this.material = multi;
 
-
+      wall.getObject = () => this;
+      
       this.addMesh(wall);
       this.addMesh( {} );
 
@@ -76,9 +77,11 @@ class TWall extends TRigid {
       this.material.subMaterials[0].diffuseTexture = new BABYLON.Texture(name, map.getScene());
       this.material.subMaterials[1].diffuseTexture = new BABYLON.Texture(name, map.getScene());
    }
+
    setFrontTexture(name) {
       this.material.subMaterials[1].diffuseTexture = new BABYLON.Texture(name, map.getScene());
    }
+
    setBackTexture(name) {
       this.material.subMaterials[0].diffuseTexture = new BABYLON.Texture(name, map.getScene());
    }
@@ -106,8 +109,6 @@ class TWall extends TRigid {
    }
 
    isFreeSpace(options, xPos, yPos) {
-      //if(options.width%2 !== 0) { xPos -= 0.5};
-      //if(options.height%2 !== 0) { yPos -= 0.5};
       
       if (xPos < options.width/2  || yPos <= options.height/2 || 
          this.width - xPos < options.width/2  || this.height - yPos <= options.height/2 ) {
@@ -135,30 +136,22 @@ class TWall extends TRigid {
       
       cutout.getMesh().rotation.y = this.rotation;
 
+      cutout.getMesh().material = this.material;
+
       const cutoutCSG = BABYLON.CSG.FromMesh(cutout.getMesh());
       const wallCSG = BABYLON.CSG.FromMesh(this.getMesh());
-      const newWall = wallCSG.subtract(cutoutCSG);
+      wallCSG.subtractInPlace(cutoutCSG);      
 
       cutout.getMesh().dispose();
 
       this.remove();
       
-      const newMeshWall = newWall.toMesh(this.name, this.material, map.getScene());
-      
-      //newMeshWall.subMeshes = [];
-      //let verticesCount = newMeshWall.getTotalVertices();
+      const newMeshWall = wallCSG.toMesh(this.name, this.material, map.getScene());
+      newMeshWall.rotation.y = this.rotation;
 
-      //newMeshWall.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCount, 0, 6, newMeshWall));
-      //newMeshWall.subMeshes.push(new BABYLON.SubMesh(1, 1, verticesCount, 6, 6, newMeshWall));
-      //newMeshWall.subMeshes.push(new BABYLON.SubMesh(2, 2, verticesCount, 12, 6, newMeshWall));
-      //newMeshWall.subMeshes.push(new BABYLON.SubMesh(3, 3, verticesCount, 18, 6, newMeshWall));
-      //newMeshWall.subMeshes.push(new BABYLON.SubMesh(4, 4, verticesCount, 24, 6, newMeshWall));
-      //newMeshWall.subMeshes.push(new BABYLON.SubMesh(5, 5, verticesCount, 30, 6, newMeshWall));
-
-      newMeshWall.material = this.material;
-      
-      newMeshWall.checkCollisions = this.collision;            
-      
+      newMeshWall.material = this.material;      
+      newMeshWall.checkCollisions = this.collision;
+      newMeshWall.getObject = () => this;
 
       this.meshArr[0] = newMeshWall;
 
@@ -168,6 +161,7 @@ class TWall extends TRigid {
 
 
       addingObject.getMesh().rotation.y = this.rotation;
+      addingObject.getMesh().getContainingWall = () => this;
 
       for(let i = Math.floor(this.height - yPos - addingObject.height/2); i < Math.floor(this.height - yPos + addingObject.height/2); i++)
         for(let j = Math.floor(xPos - addingObject.width/2); j < Math.floor(addingObject.width/2 + xPos); j++)
@@ -198,7 +192,8 @@ class TWall extends TRigid {
       this.remove();
 
       const newMeshWall = solidWallCSG.toMesh(this.name, this.material, map.getScene());
-      newMeshWall.checkCollisions = this.collision;            
+      newMeshWall.checkCollisions = this.collision;
+      newMeshWall.getObject = () => this;
       this.meshArr[0] = newMeshWall;
 
       const c = this.width/2;
