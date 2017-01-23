@@ -3,6 +3,7 @@ class T3DObject extends TRigid {
 		super(options);
 		BABYLON.SceneLoader.ImportMesh('', 'scenes/', options.name + '.babylon', map.getScene(), (newMeshes) => {
 			
+			this.args = options;
 			this.mesh = map.getScene().meshes[map.getScene().meshes.length - 1];
 			this.mesh.getObject = () => this;
 			this.mesh.name = options.name + Math.random().toFixed(3) * 1000;

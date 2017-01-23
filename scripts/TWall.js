@@ -1,7 +1,8 @@
 class TWall extends TRigid {
-   constructor(height, width, depth, name) {
+   constructor(options) {
       super();
-
+      this.args = options;
+      const height = options.height, width = options.width, depth = options.depth, name = options.name;
       const wall = BABYLON.MeshBuilder.CreateBox(name, {height: height, width: width, depth: depth, updateble: true}, map.getScene());
       wall.checkCollisions = this.collision;
       this.name = name;

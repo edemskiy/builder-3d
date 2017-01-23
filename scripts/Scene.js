@@ -11,22 +11,27 @@ class Scene {
       let pickObj = document.getElementById("pickObjects");
       let groupObj = document.getElementById("makeGroup");
       let ungroupObj = document.getElementById("unGroup");
+      let mkCopy = document.getElementById("mkCopy");
 
       pickObj.onclick = () => {
         pickObj.style["background-color"] = '#54bf4b';
         groupObj.style.display = 'block';
         this.pickObjects();
-      }
+      };
       groupObj.onclick = () => {
         pickObj.style["background-color"] = '#5c92ea';
         groupObj.style.display = 'none';
 
         this.groupObjects();
-      }
+      };
       ungroupObj.onclick = () => {
         ungroupObj.style.display = 'none';
+        mkCopy.style.display = 'none';
         this.ungroupObjects();
-      }
+      };
+      mkCopy.onclick = () => {
+        this.cloneObject();
+      };
 
 
       const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 60, -80), this.scene);
@@ -50,18 +55,18 @@ class Scene {
       groundMaterial.diffuseColor = new BABYLON.Color3(2,2,2);
       ground.material = groundMaterial;
 
-      const room1 = new TRoom(15, 50, 50, 'room1');
+      const room1 = new TRoom(20, 50, 50, 'room1');
 
       this.roomsArr = {
        room1
       };
 
-      let box1 = new TWall(6,6,6, 'box');
-      let box2 = new TWall(6,6,6, 'box2');
-      let box3 = new TWall(6,6,6, 'box3');
-      box1.setPosition(-10,3,0);
-      box2.setPosition(0,3,0);
-      box3.setPosition(10,3,0);
+      // let box1 = new TWall({height: 6, width: 6, depth: 6, name: 'box'});
+      // let box2 = new TWall({height: 6, width: 6, depth: 6, name: 'box2'});
+      // let box3 = new TWall({height: 6, width: 6, depth: 6, name: 'box3'});
+      // box1.setPosition(-10,3,0);
+      // box2.setPosition(0,3,0);
+      // box3.setPosition(10,3,0);
 
       
       let elementsData = [TWindow, TDoor, T3DObject];
@@ -228,11 +233,13 @@ class Scene {
             if(item.getObject){
               item.getObject().unpick();
               document.getElementById("unGroup").style.display = 'none';
+              document.getElementById("mkCopy").style.display = 'none';
             }
           });
           const pickedMesh = evt.pickInfo.pickedMesh;
           if (pickedMesh.getObject) {
             pickedMesh.getObject().pick();
+            document.getElementById("mkCopy").style.display = 'block';
             if(pickedMesh.getGroupObj){
               pickedMesh.getGroupObj().pickAll();
               document.getElementById("unGroup").style.display = 'block';
@@ -317,6 +324,22 @@ class Scene {
           item.getObject().getGroupObj = null;
         }
       });
+
+    }
+
+    cloneObject(){
+      for(let i = 0; i < this.scene.meshes.length; i++) {
+        let item = this.scene.meshes[i];
+        if (item.getObject && item.getObject().isPicked) {
+          if(item.getGroupObj){
+            item.getGroupObj().clone();
+          }
+          else{
+            item.getObject().clone();
+          }
+          break;
+        }
+      }
 
     }
 }

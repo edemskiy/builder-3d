@@ -16,6 +16,8 @@ html, body {
    z-index: 1;
 }
 .btn{
+   display: block;
+   width: 140px;
    padding: 10px;
    margin: 5px;
    border: 1px solid #FFF;

@@ -1,6 +1,7 @@
 class TRigid extends TObject {
    constructor() {
       super();
+
       let material = new BABYLON.StandardMaterial('material', map.getScene());
       this.material = material;
       this.collision = true;
@@ -68,6 +69,7 @@ class TRigid extends TObject {
       this.wrapMesh.material = wrapMeshMaterial;
 
       this.wrapMesh.parent = this.getMesh();
+
    }
 
    unpick(){
@@ -101,5 +103,18 @@ class TRigid extends TObject {
 
    getClassName() {
       return this.constructor.name;
+   }
+
+   clone(){
+      const constr = this.getMesh().getObject().constructor;
+      let tmp = new constr(this.args);
+      
+      tmp.getMesh().material = tmp.material = this.material;
+      tmp.rotateY(this.getRotationY());
+      
+      const pos = this.getPosition();
+      tmp.setPosition(pos.x + this.width + 2, pos.y, pos.z);
+
+      return tmp;
    }
 };

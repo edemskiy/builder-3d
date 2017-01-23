@@ -4,23 +4,23 @@ class TRoom extends TRigid {
       this.name = name;
       let depth = 0.5;     
 
-      let floor = new TFloor(length, width, depth, name + ':floor');
+      let floor = new TFloor({height: length, width: width, depth: depth, name: name + ':floor'});
       floor.material.diffuseColor = new BABYLON.Color3(1, 0.85, 0.62);
       this.floor = floor;
    
-      let backWall = new TWall(height, floor.width, depth, name + ':backWall');  
+      let backWall = new TWall({height: height, width: floor.width, depth: depth, name: name + ':backWall'});  
       backWall.rotateY(Math.PI);
       this.backWall = backWall;
    
-      let frontWall = new TWall(height, floor.width, depth, name + ':frontWall');
+      let frontWall = new TWall({height: height, width: floor.width, depth: depth, name: name + ':frontWall'});
       this.frontWall = frontWall;
    
-      let rightWall = new TWall(backWall.height, floor.height, depth, name + ':rightWall');
+      let rightWall = new TWall({height: backWall.height, width: floor.height, depth: depth, name: name + ':rightWall'});
       rightWall.rotateY(Math.PI/2);
       this.rightWall = rightWall;
    
-      let leftWall = new TWall(backWall.height, floor.height, depth, name + ':leftWall');
-      leftWall.rotateY(-Math.PI/2);      
+      let leftWall = new TWall({height: backWall.height, width: floor.height, depth: depth, name: name + ':leftWall'});
+      leftWall.rotateY(-Math.PI/2);
       this.leftWall = leftWall;
 
       // let ceiling = new TCeiling(floor.height, floor.width, depth, name + ':ceiling');
