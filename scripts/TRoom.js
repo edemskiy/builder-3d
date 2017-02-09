@@ -40,7 +40,7 @@ class TRoom extends TRigid {
       };
    }
 
-   setPosition(x, y , z) {
+   setPosition(x, y, z) {
       this.floor.setPosition(x, y, z);
       this.backWall.setPosition(this.floor.getPosition().x, this.floor.getPosition().y + this.backWall.height/2, this.floor.getPosition().z - this.floor.height/2);
       this.frontWall.setPosition(this.floor.getPosition().x, this.floor.getPosition().y + this.frontWall.height/2, this.floor.getPosition().z + this.floor.height/2); 

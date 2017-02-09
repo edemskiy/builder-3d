@@ -4,35 +4,27 @@ class Scene {
       scene.clearColor = new BABYLON.Color3(1, 1, 1);
       scene.collisionsEnabled = true;
       scene.gravity = new BABYLON.Vector3(0, -2, 0);
-      this.scene = scene;      
+      this.scene = scene;
+
+      this.cloneObject = this.cloneObject.bind(this);
+      this.pickObjects = this.pickObjects.bind(this);
+      this.groupObjects = this.groupObjects.bind(this);
+      this.ungroupObjects = this.ungroupObjects.bind(this);
+      this.deleteObject = this.deleteObject.bind(this);
     }
 
     createScene() {
-      let pickObj = document.getElementById("pickObjects");
-      let groupObj = document.getElementById("makeGroup");
-      let ungroupObj = document.getElementById("unGroup");
-      let mkCopy = document.getElementById("mkCopy");
+      const pickObj = document.getElementById("pickObjects");
+      const groupObj = document.getElementById("makeGroup");
+      const ungroupObj = document.getElementById("unGroup");
+      const cloneObj = document.getElementById("cloneObject");
+      const deleteObj = document.getElementById("deleteObject");
 
-      pickObj.onclick = () => {
-        pickObj.style["background-color"] = '#54bf4b';
-        groupObj.style.display = 'block';
-        this.pickObjects();
-      };
-      groupObj.onclick = () => {
-        pickObj.style["background-color"] = '#5c92ea';
-        groupObj.style.display = 'none';
-
-        this.groupObjects();
-      };
-      ungroupObj.onclick = () => {
-        ungroupObj.style.display = 'none';
-        mkCopy.style.display = 'none';
-        this.ungroupObjects();
-      };
-      mkCopy.onclick = () => {
-        this.cloneObject();
-      };
-
+      pickObj.onclick = this.pickObjects;
+      groupObj.onclick = this.groupObjects;
+      ungroupObj.onclick = this.ungroupObjects;
+      cloneObj.onclick = this.cloneObject;
+      deleteObj.onclick = this.deleteObject;
 
       const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 60, -80), this.scene);
       //const camera = new BABYLON.ArcRotateCamera('RotateCamera', 3 * Math.PI/2, Math.PI/8, 100, BABYLON.Vector3.Zero(),this.scene);
@@ -56,24 +48,12 @@ class Scene {
       ground.material = groundMaterial;
 
       const room1 = new TRoom(20, 50, 50, 'room1');
-
-      this.roomsArr = {
-       room1
-      };
-
-      // let box1 = new TWall({height: 6, width: 6, depth: 6, name: 'box'});
-      // let box2 = new TWall({height: 6, width: 6, depth: 6, name: 'box2'});
-      // let box3 = new TWall({height: 6, width: 6, depth: 6, name: 'box3'});
-      // box1.setPosition(-10,3,0);
-      // box2.setPosition(0,3,0);
-      // box3.setPosition(10,3,0);
-
       
       let elementsData = [TWindow, TDoor, T3DObject];
 
       let activeObjectElement = T3DObject;
       
-      let startingPoint, currentMeshObj, currentMesh, intersectedMesh, beginPosition;
+      let startingPoint, currentMeshObj, currentMesh, intersectedMesh, beginPosition, offset;
 
       const getGroundPosition = () => {
         let pickinfo = this.scene.pick(this.scene.pointerX, this.scene.pointerY, mesh => (mesh == ground) );
@@ -96,6 +76,8 @@ class Scene {
         if (pickInfo.hit) {
           currentMeshObj = evt.pickInfo.pickedMesh.getObject();
           currentMesh = currentMeshObj.getMesh();
+
+          offset = {x: this.scene.pointerX, y: this.scene.pointerY};
 
           beginPosition = new BABYLON.Vector3(currentMesh.position.x, currentMesh.position.y, currentMesh.position.z);
           startingPoint = getGroundPosition(evt);
@@ -138,6 +120,12 @@ class Scene {
 
         const diff = current.subtract(startingPoint);
 
+        if (currentMesh.isPin) {
+          if(Math.sqrt( (offset.x - this.scene.pointerX)**2 + (offset.y - this.scene.pointerY)**2 ) < 50)
+            return;
+          else currentMesh.isPin = false;
+        }
+        
         if(currentMesh.getContainingWall){
           const containingWall = currentMesh.getContainingWall();
           const alpha = -containingWall.getRotationY();
@@ -173,6 +161,78 @@ class Scene {
 
         currentMesh.position.x += diff.x;
         currentMesh.position.z += diff.z;
+
+        for(let i = 0; i < this.scene.meshes.length; i++){
+          const mesh = this.scene.meshes[i];
+          if(mesh === currentMesh || mesh === ground || !mesh.getObject || mesh.name.includes("Wrap") || mesh.intersectsMesh(currentMesh)) continue;
+
+          const endpoints = currentMeshObj.getEndpoints();
+          const endpointsMesh = mesh.getObject().getEndpoints();
+
+          const left = endpointsMesh.x.max < endpoints.x.min;
+          const right = endpoints.x.max < endpointsMesh.x.min;
+          const bottom = endpointsMesh.z.max < endpoints.z.min;
+          const top = endpoints.z.max < endpointsMesh.z.min;
+
+          let distanceInfo = (() => {
+            if (top && left)
+              return { 
+                dist: Math.sqrt((endpoints.x.min - endpointsMesh.x.max) ** 2 + (endpoints.z.max - endpointsMesh.z.min) ** 2),
+                diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, endpointsMesh.z.min - endpoints.z.max)
+              };
+            else if(left && bottom)
+              return {
+                dist: Math.sqrt((endpoints.x.min - endpointsMesh.x.max) ** 2 + (endpoints.z.min - endpointsMesh.z.max) ** 2),
+                diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, endpointsMesh.z.max - endpoints.z.min)
+              };
+
+            else if(bottom && right)
+              return {
+                dist: Math.sqrt((endpoints.x.max - endpointsMesh.x.min) ** 2 + (endpoints.z.min - endpointsMesh.z.max) ** 2),
+                diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, endpointsMesh.z.max - endpoints.z.min)
+              };
+
+            else if(right && top)
+              return {
+                dist: Math.sqrt((endpoints.x.max - endpointsMesh.x.min) ** 2 + (endpoints.z.max - endpointsMesh.z.min) ** 2),
+                diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, endpointsMesh.z.min - endpoints.z.max)
+              };
+
+            else if(left)
+              return {
+                dist: endpoints.x.min - endpointsMesh.x.max,
+                diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, 0)
+              };
+
+            else if(right)
+              return {
+                dist: endpointsMesh.x.min - endpoints.x.max,
+                diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, 0)
+              };
+
+            else if(bottom)
+              return {
+                dist: endpoints.z.min - endpointsMesh.z.max,
+                diff: new BABYLON.Vector3(0, 0, endpointsMesh.z.max - endpoints.z.min)
+              };
+
+            else if(top)
+              return {
+                dist: endpointsMesh.z.min - endpoints.z.max,
+                diff: new BABYLON.Vector3(0, 0, endpointsMesh.z.min - endpoints.z.max)
+              };
+          })();
+
+          if(!distanceInfo) break;
+
+          if (distanceInfo.dist < 2.5) {
+           currentMesh.position.x += distanceInfo.diff.x;
+           currentMesh.position.z += distanceInfo.diff.z;
+           currentMesh.isPin = true;
+           offset = {x: this.scene.pointerX, y: this.scene.pointerY};
+           break;
+         }
+        }
         startingPoint = current;
       }, BABYLON.PointerEventTypes.POINTERMOVE);
 
@@ -233,13 +293,13 @@ class Scene {
             if(item.getObject){
               item.getObject().unpick();
               document.getElementById("unGroup").style.display = 'none';
-              document.getElementById("mkCopy").style.display = 'none';
+              document.getElementById("objectControls").style.display = "none";
             }
           });
           const pickedMesh = evt.pickInfo.pickedMesh;
           if (pickedMesh.getObject) {
             pickedMesh.getObject().pick();
-            document.getElementById("mkCopy").style.display = 'block';
+           document.getElementById("objectControls").style.display = "block";
             if(pickedMesh.getGroupObj){
               pickedMesh.getGroupObj().pickAll();
               document.getElementById("unGroup").style.display = 'block';
@@ -254,6 +314,9 @@ class Scene {
     }
 
     pickObjects(){
+      document.getElementById("pickObjects").style["background-color"] = '#54bf4b';
+      document.getElementById("makeGroup").style.display = 'block';
+
       if(this.pickPointerUpObserver){
         document.getElementById("pickObjects").style["background-color"] = '#5c92ea';
         document.getElementById("makeGroup").style.display = 'none';
@@ -295,7 +358,11 @@ class Scene {
       }, BABYLON.PointerEventTypes.POINTERUP);
     }
 
-    groupObjects(){    
+    groupObjects(){
+
+      document.getElementById("pickObjects").style["background-color"] = '#5c92ea';
+      document.getElementById("makeGroup").style.display = 'none';
+
       this.scene.onPointerObservable.remove(this.pickPointerUpObserver);
       delete this.pickPointerUpObserver;
 
@@ -315,7 +382,9 @@ class Scene {
 
       let group = new TGroup(objects);      
     }
+
     ungroupObjects(){
+      document.getElementById("objectControls").style.display = "none";
       this.scene.meshes.map((item) => {
         if(item.getObject && item.getObject().isPicked){
           item.getObject().unpick();
@@ -324,10 +393,27 @@ class Scene {
           item.getObject().getGroupObj = null;
         }
       });
-
     }
 
     cloneObject(){
+      document.getElementById("objectControls").style.display = "none";
+      let objects = [];
+      this.scene.meshes.map((item) => {
+        if(item.name.includes("Wrap")) return;
+        
+        if(item.getObject && item.getObject().isPicked)
+          if(item.getGroupObj){
+            objects.push(item.getGroupObj());
+            item.getGroupObj().unpickAll();
+          }
+          else
+            objects.push(item.getObject());
+      });
+
+      objects.map( (item) => item.clone() );
+
+      /* first version
+      
       for(let i = 0; i < this.scene.meshes.length; i++) {
         let item = this.scene.meshes[i];
         if (item.getObject && item.getObject().isPicked) {
@@ -340,6 +426,25 @@ class Scene {
           break;
         }
       }
+      */
+    }
 
+    deleteObject(){
+      document.getElementById("objectControls").style.display = "none";
+      console.log("hi");
+      let objects = [];
+      this.scene.meshes.map((item) => {
+        if(item.name.includes("Wrap")) return;
+        
+        if(item.getObject && item.getObject().isPicked)
+            objects.push(item);
+      });
+
+      objects.map((item) => {
+        let obj = item.getObject();
+        obj.unpick();
+        obj.remove();
+        item.getObject = null;
+      })
     }
 }

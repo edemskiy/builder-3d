@@ -7,6 +7,7 @@ class TRigid extends TObject {
       this.collision = true;
       this.addingMode = 'union';
       this.isPicked = false;
+      this.isPinned = false;
    }
 
    getPosition() {
@@ -22,6 +23,10 @@ class TRigid extends TObject {
    rotateY(alpha) {
       this.getMesh().rotation.y = alpha;
       this.rotation = alpha;
+   }
+
+   remove() {
+         this.getMesh().dispose();
    }
 
    getRotationY() {
@@ -69,7 +74,6 @@ class TRigid extends TObject {
       this.wrapMesh.material = wrapMeshMaterial;
 
       this.wrapMesh.parent = this.getMesh();
-
    }
 
    unpick(){
@@ -96,7 +100,7 @@ class TRigid extends TObject {
    rotateAroundPoint(point, alpha){
       this.rotateY(this.getRotationY() + alpha);
       const objPosition = this.getPosition();
-      
+
       this.getMesh().position.x = point.x + (objPosition.x - point.x)*Math.cos(alpha) - (objPosition.z - point.z)*Math.sin(-alpha);
       this.getMesh().position.z = point.z + (objPosition.z - point.z)*Math.cos(alpha) + (objPosition.x - point.x)*Math.sin(-alpha);
    }
@@ -113,8 +117,41 @@ class TRigid extends TObject {
       tmp.rotateY(this.getRotationY());
       
       const pos = this.getPosition();
-      tmp.setPosition(pos.x + this.width + 2, pos.y, pos.z);
+      const endpoints = this.getEndpoints();
+      tmp.setPosition(pos.x + endpoints.x.max - endpoints.x.min + 5, pos.y, pos.z);
 
       return tmp;
+   }
+
+   getEndpoints(){
+      const currPos = this.getPosition();
+      const alpha = -this.getRotationY();
+
+      let arr = [new BABYLON.Vector3(currPos.x + this.width/2, 1, currPos.z + this.depth/2),
+         new BABYLON.Vector3(currPos.x + this.width/2, 0, currPos.z - this.depth/2),
+         new BABYLON.Vector3(currPos.x - this.width/2, 0, currPos.z + this.depth/2),
+         new BABYLON.Vector3(currPos.x - this.width/2, 0, currPos.z - this.depth/2),
+         ];
+
+      let newArr = arr.map((item) => {
+         
+         return new BABYLON.Vector3(currPos.x + (item.x - currPos.x)*Math.cos(alpha) - (item.z - currPos.z)*Math.sin(-alpha),
+           0,
+           currPos.z + (item.z - currPos.z)*Math.cos(alpha) + (item.x - currPos.x)*Math.sin(-alpha));
+      });
+
+      const xArr = newArr.map(item => item.x);
+      const zArr = newArr.map(item => item.z);
+
+      return { 
+         x: {
+            min: Math.min.apply(Math, xArr),
+            max: Math.max.apply(Math, xArr),
+         },
+         z: {
+            min: Math.min.apply(Math, zArr),
+            max: Math.max.apply(Math, zArr),
+         }
+      };
    }
 };

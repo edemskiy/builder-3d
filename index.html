@@ -14,8 +14,11 @@
       <div class="main">
          <button class="btn" id="pickObjects">Выделить объекты</button>
          <button class="btn hidden" id="makeGroup">Сгруппировать</button>
-         <button class="btn hidden" id="unGroup">Разгруппировать</button>
-         <button class="btn hidden" id="mkCopy">Копировать</button>
+         <div class="hidden" id="objectControls">
+            <button class="btn hidden" id="unGroup">Разгруппировать</button>
+            <button class="btn" id="cloneObject">Копировать</button>
+            <button class="btn" id="deleteObject">Удалить</button>
+         </div>
       </div>
       <!-- Подключение классов -->
       <script src="scripts/Map.js"></script>

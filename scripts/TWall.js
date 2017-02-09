@@ -53,10 +53,6 @@ class TWall extends TRigid {
          this.CSGWall = BABYLON.CSG.FromMesh(this.getMesh());
    }
 
-   remove() {
-         this.getMesh().dispose();
-   }
-
    rotateY(alpha){
       this.getMesh().rotation.y = alpha;
       this.rotation = alpha;
