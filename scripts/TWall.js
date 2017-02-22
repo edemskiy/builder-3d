@@ -54,6 +54,7 @@ class TWall extends TRigid {
    }
 
    rotateY(alpha){
+      alpha = alpha % (2*Math.PI);
       this.getMesh().rotation.y = alpha;
       this.rotation = alpha;
 

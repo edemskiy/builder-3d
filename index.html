@@ -1,41 +1,107 @@
 <!doctype html>
 <html>
-   <head>
-      <meta charset="utf-8">
-      <title>My Scene</title>
+<head>
+   <meta charset="utf-8">
+   <title>My Scene</title>
 
-      <link href="css/main.css" rel="stylesheet">
-      <script src="scripts/babylon/babylon.custom.js"></script>
-      
-   </head>
-   <body>
-      
-      <canvas id="renderCanvas"></canvas>
-      <div class="main">
-         <button class="btn" id="pickObjects">Выделить объекты</button>
-         <button class="btn hidden" id="makeGroup">Сгруппировать</button>
-         <div class="hidden" id="objectControls">
-            <button class="btn hidden" id="unGroup">Разгруппировать</button>
-            <button class="btn" id="cloneObject">Копировать</button>
-            <button class="btn" id="deleteObject">Удалить</button>
+   <link href="css/main.css" rel="stylesheet">
+   <script src="scripts/babylon/babylon.custom.js"></script>
+   
+</head>
+<body>
+   
+   <canvas id="renderCanvas"></canvas>
+   <div class="main">
+      <div class="controls">
+         <div class="elements-block">
+            <div class="flex-row content-start">
+               <button class="btn" id="pickObjects">Выделить объекты</button>
+               <button class="btn hidden" id="makeGroup">Сгруппировать</button>
+            </div>
+            <div class="flex-row">
+               <div class="styled-select">
+                  <select class="select" id="selectAddingObject">
+                     <option>Блок</option>
+                     <option>sample1</option>
+                     <option>sample2</option>
+                  </select>
+               </div>
+               <button class="btn" id="addObject">Добавить</button>
+            </div>
+         </div>
+
+         <div class="hidden elements-block" id="objectControls">
+            <div class="flex-row content-start">
+               <button class="btn hidden" id="unGroup">Разгруппировать</button>
+               <button class="btn" id="cloneObject">Копировать</button>
+               <button class="btn" id="deleteObject">Удалить</button>
+            </div>
+
+            <div class="changeSize sett-block flex-row" id="changeSize">
+               <div> Ширина: <input type="number" name="rangeX" min="1" id="changeSizeX"/> </div>
+               <div> Высота: <input type="number" name="rangeY" min="1" id="changeSizeY"/> </div>
+               <div> Глубина: <input type="number" name="rangeZ" min="1" id="changeSizeZ"/> </div>
+            </div>
+
+            <div class="flex-row rotateY">
+               <div class="sett-block">
+                  Поворот: <input type="number" name="rotateY" id="rotateObjectY"/>
+               </div>
+               <div class="sett-block flex-row" id="changePosition">
+                  <div>x: <input type="number" id="xPosition" /></div>
+                  <div>y: <input type="number" id="yPosition" /></div>
+                  <div>z: <input type="number" id="zPosition" /></div>
+               </div>
+            </div>
+
+            <div class="axisSettings  sett-block flex-row">
+               <div class="flex-row">
+                  Ось x: <input type="checkbox" checked="checked" class="checkbox" id="axisX" />
+                  <label for="axisX"></label>
+               </div>
+               <div class="flex-row">
+                  Ось y: <input type="checkbox" class="checkbox" id="axisY" />
+                  <label for="axisY"></label>
+               </div>
+               <div class="flex-row">
+                  Ось z: <input type="checkbox" checked="checked" class="checkbox" id="axisZ" />
+                  <label for="axisZ"></label>
+               </div>                  
+            </div>
+            <div class="flex-row">
+               <div class="sett-block">
+                  <div class="flex-row">
+                     Прилипание объектов: <input type="checkbox" class="checkbox" id="objectsStick" />
+                     <label for="objectsStick"></label>
+                  </div>
+                  
+               </div>
+               <div class="sett-block">
+                  <div class="flex-row">
+                     Прилипание к сетке: <input type="checkbox" class="checkbox" id="gridStick" />
+                     <label for="gridStick"></label>
+                  </div>
+               </div>
+            </div>
          </div>
       </div>
-      <!-- Подключение классов -->
-      <script src="scripts/Map.js"></script>
-      <script src="scripts/Scene.js"></script>
-      <script src="scripts/TObject.js"></script>
-      <script src="scripts/TRigid.js"></script>
-      <script src="scripts/T3DObject.js"></script>
-      <script src="scripts/TWall.js"></script>
-      <script src="scripts/TGroup.js"></script>
-      <script src="scripts/TStairs.js"></script>
-      <script src="scripts/TFloor.js"></script>
-      <script src="scripts/TCeiling.js"></script>
-      <script src="scripts/TRoom.js"></script>
-      <script src="scripts/TConstruct.js"></script>
-      <script src="scripts/TCutout.js"></script>
-      <script src="scripts/TWindow.js"></script>
-      <script src="scripts/TDoor.js"></script>
-      <script src="scripts/main.js"></script>
-   </body>
+   </div>
+   <!-- Подключение классов -->
+   <script src="scripts/Map.js"></script>
+   <script src="scripts/Scene.js"></script>
+   <script src="scripts/TObject.js"></script>
+   <script src="scripts/TRigid.js"></script>
+   <script src="scripts/T3DObject.js"></script>
+   <script src="scripts/TWall.js"></script>
+   <script src="scripts/TGroup.js"></script>
+   <script src="scripts/TStairs.js"></script>
+   <script src="scripts/TFloor.js"></script>
+   <script src="scripts/TCeiling.js"></script>
+   <script src="scripts/TRoom.js"></script>
+   <script src="scripts/TConstruct.js"></script>
+   <script src="scripts/TCutout.js"></script>
+   <script src="scripts/TWindow.js"></script>
+   <script src="scripts/TDoor.js"></script>
+   <script src="scripts/main.js"></script>
+</body>
 </html>

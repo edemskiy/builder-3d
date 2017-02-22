@@ -17,10 +17,15 @@ class TRigid extends TObject {
    }
 
    setPosition(x, y, z) {
-         this.getMesh().position = new BABYLON.Vector3(x,y,z);
+      if(x === undefined) x = this.getPosition().x;
+      if(y === undefined) y = this.getPosition().y;
+      if(z === undefined) z = this.getPosition().z;
+
+      this.getMesh().position = new BABYLON.Vector3(x,y,z);
    }
 
    rotateY(alpha) {
+      alpha = alpha % (2*Math.PI);
       this.getMesh().rotation.y = alpha;
       this.rotation = alpha;
    }
@@ -30,7 +35,7 @@ class TRigid extends TObject {
    }
 
    getRotationY() {
-      return this.getMesh().rotation.y;
+      return this.rotation;
    }
 
    setMaterial(material) {
@@ -64,16 +69,17 @@ class TRigid extends TObject {
       
       this.isPicked = true;
       const size = this.getMesh().getBoundingInfo().boundingBox.extendSize;
+      //const size = this.getMesh().scaling;
       this.wrapMesh = BABYLON.MeshBuilder.CreateBox(this.name + "Wrap", {height: size.y*2 + 0.3, width: size.x*2 + 0.3, depth: size.z*2 + 0.3, updateble: true}, map.getScene());
-
+      //this.wrapMesh = BABYLON.MeshBuilder.CreateBox(this.name + "Wrap", {height: size.y, width: size.x, depth: size.z, updateble: true}, map.getScene());
+      
       this.wrapMesh.getObject = () => this.getMesh().getObject();
       
       const wrapMeshMaterial = new BABYLON.StandardMaterial('wrapMaterial', map.getScene());
       wrapMeshMaterial.wireframe = true;
       wrapMeshMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);
       this.wrapMesh.material = wrapMeshMaterial;
-
-      this.wrapMesh.parent = this.getMesh();
+      this.wrapMesh.parent = this.getMesh();      
    }
 
    unpick(){
@@ -85,13 +91,18 @@ class TRigid extends TObject {
    }
 
    setSize(height, width, depth) {
+
+      height = height || this.height;
+      width = width || this.width;
+      depth = depth || this.depth;
       
-      const size = newMeshes[0].getBoundingInfo().boundingBox.extendSize;      
+      let size = this.getMesh().getBoundingInfo().boundingBox.extendSize;
 
-      this.getMesh().scaling.x = width/size.x;
-      this.getMesh().scaling.y = height/size.y;
-      this.getMesh().scaling.x = depth/size.z;
+      this.getMesh().scaling.x = 0.5*width/size.x;
+      this.getMesh().scaling.y = 0.5*height/size.y;
+      this.getMesh().scaling.z = 0.5*depth/size.z;
 
+      this.getMesh().position.y += (height - this.height)/2;
       this.height = height;
       this.width = width;
       this.depth = depth;
@@ -115,6 +126,7 @@ class TRigid extends TObject {
       
       tmp.getMesh().material = tmp.material = this.material;
       tmp.rotateY(this.getRotationY());
+      tmp.getMesh().scaling = new BABYLON.Vector3(this.getMesh().scaling.x, this.getMesh().scaling.y, this.getMesh().scaling.z) ;
       
       const pos = this.getPosition();
       const endpoints = this.getEndpoints();

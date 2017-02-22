@@ -11,20 +11,43 @@ class Scene {
       this.groupObjects = this.groupObjects.bind(this);
       this.ungroupObjects = this.ungroupObjects.bind(this);
       this.deleteObject = this.deleteObject.bind(this);
+      this.changeSize = this.changeSize.bind(this);
+      this.rotateObjectY = this.rotateObjectY.bind(this);
+      this.changeObjectPosition = this.changeObjectPosition.bind(this);
     }
 
     createScene() {
+      /* -----------------------------------------*/
+
       const pickObj = document.getElementById("pickObjects");
       const groupObj = document.getElementById("makeGroup");
       const ungroupObj = document.getElementById("unGroup");
       const cloneObj = document.getElementById("cloneObject");
       const deleteObj = document.getElementById("deleteObject");
 
+
+      document.getElementById("changeSize").oninput = this.changeSize;
+      document.getElementById("rotateObjectY").oninput = this.rotateObjectY;
+      document.getElementById("changePosition").oninput = this.changeObjectPosition;
+
+      const axisX = document.getElementById("axisX");
+      const axisY = document.getElementById("axisY");
+      const axisZ = document.getElementById("axisZ");
+
+      const objectsStick = document.getElementById("objectsStick");
+      const gridStick = document.getElementById("gridStick");
+
+      axisY.onchange = (e) => { axisZ.checked = axisX.checked = !e.target.checked; };
+      axisX.onchange = () => { axisY.checked = false; };
+      axisZ.onchange = () => { axisY.checked = false; };
+
       pickObj.onclick = this.pickObjects;
       groupObj.onclick = this.groupObjects;
       ungroupObj.onclick = this.ungroupObjects;
       cloneObj.onclick = this.cloneObject;
       deleteObj.onclick = this.deleteObject;
+
+      /* -----------------------------------------*/
 
       const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 60, -80), this.scene);
       //const camera = new BABYLON.ArcRotateCamera('RotateCamera', 3 * Math.PI/2, Math.PI/8, 100, BABYLON.Vector3.Zero(),this.scene);
@@ -120,12 +143,6 @@ class Scene {
 
         const diff = current.subtract(startingPoint);
 
-        if (currentMesh.isPin) {
-          if(Math.sqrt( (offset.x - this.scene.pointerX)**2 + (offset.y - this.scene.pointerY)**2 ) < 50)
-            return;
-          else currentMesh.isPin = false;
-        }
-        
         if(currentMesh.getContainingWall){
           const containingWall = currentMesh.getContainingWall();
           const alpha = -containingWall.getRotationY();
@@ -153,86 +170,107 @@ class Scene {
           return;
         }
 
+        if (currentMesh.isPin) {
+          if(Math.sqrt( (offset.x - this.scene.pointerX)**2 + (offset.y - this.scene.pointerY)**2 ) < 50)
+            return;
+          else currentMesh.isPin = false;
+        }
+        
         if(currentMesh.getGroupObj){
-          currentMesh.getGroupObj().move(diff);
+          diff.y = (offset.y - this.scene.pointerY)/10
+          currentMesh.getGroupObj().move(diff, {x: axisX.checked, y: axisY.checked, z: axisZ.checked});
+          offset = {x: this.scene.pointerX, y: this.scene.pointerY};
           startingPoint = current;
           return;
         }
 
-        currentMesh.position.x += diff.x;
-        currentMesh.position.z += diff.z;
-
-        for(let i = 0; i < this.scene.meshes.length; i++){
-          const mesh = this.scene.meshes[i];
-          if(mesh === currentMesh || mesh === ground || !mesh.getObject || mesh.name.includes("Wrap") || mesh.intersectsMesh(currentMesh)) continue;
-
-          const endpoints = currentMeshObj.getEndpoints();
-          const endpointsMesh = mesh.getObject().getEndpoints();
-
-          const left = endpointsMesh.x.max < endpoints.x.min;
-          const right = endpoints.x.max < endpointsMesh.x.min;
-          const bottom = endpointsMesh.z.max < endpoints.z.min;
-          const top = endpoints.z.max < endpointsMesh.z.min;
-
-          let distanceInfo = (() => {
-            if (top && left)
-              return { 
-                dist: Math.sqrt((endpoints.x.min - endpointsMesh.x.max) ** 2 + (endpoints.z.max - endpointsMesh.z.min) ** 2),
-                diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, endpointsMesh.z.min - endpoints.z.max)
-              };
-            else if(left && bottom)
-              return {
-                dist: Math.sqrt((endpoints.x.min - endpointsMesh.x.max) ** 2 + (endpoints.z.min - endpointsMesh.z.max) ** 2),
-                diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, endpointsMesh.z.max - endpoints.z.min)
-              };
-
-            else if(bottom && right)
-              return {
-                dist: Math.sqrt((endpoints.x.max - endpointsMesh.x.min) ** 2 + (endpoints.z.min - endpointsMesh.z.max) ** 2),
-                diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, endpointsMesh.z.max - endpoints.z.min)
-              };
-
-            else if(right && top)
-              return {
-                dist: Math.sqrt((endpoints.x.max - endpointsMesh.x.min) ** 2 + (endpoints.z.max - endpointsMesh.z.min) ** 2),
-                diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, endpointsMesh.z.min - endpoints.z.max)
-              };
-
-            else if(left)
-              return {
-                dist: endpoints.x.min - endpointsMesh.x.max,
-                diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, 0)
-              };
-
-            else if(right)
-              return {
-                dist: endpointsMesh.x.min - endpoints.x.max,
-                diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, 0)
-              };
-
-            else if(bottom)
-              return {
-                dist: endpoints.z.min - endpointsMesh.z.max,
-                diff: new BABYLON.Vector3(0, 0, endpointsMesh.z.max - endpoints.z.min)
-              };
-
-            else if(top)
-              return {
-                dist: endpointsMesh.z.min - endpoints.z.max,
-                diff: new BABYLON.Vector3(0, 0, endpointsMesh.z.min - endpoints.z.max)
-              };
-          })();
-
-          if(!distanceInfo) break;
-
-          if (distanceInfo.dist < 2.5) {
-           currentMesh.position.x += distanceInfo.diff.x;
-           currentMesh.position.z += distanceInfo.diff.z;
-           currentMesh.isPin = true;
-           offset = {x: this.scene.pointerX, y: this.scene.pointerY};
-           break;
-         }
+        if(axisX.checked) currentMesh.position.x += diff.x;
+        if(axisY.checked){
+          currentMesh.position.y += (offset.y - this.scene.pointerY)/10;
+          offset = {x: this.scene.pointerX, y: this.scene.pointerY};
         }
+        if(axisZ.checked) currentMesh.position.z += diff.z;
+
+        // if(currentMesh.position.x % 40 > 33){
+        //   currentMesh.position.x += Math.sign(diff.x)*(40 - currentMesh.position.x % 40);
+        //   currentMesh.isPin = true;
+        //   offset = {x: this.scene.pointerX, y: this.scene.pointerY};
+        // }
+
+        if(objectsStick.checked){
+          for(let i = 0; i < this.scene.meshes.length; i++){
+            const mesh = this.scene.meshes[i];
+            if(mesh === currentMesh || mesh === ground || !mesh.getObject || mesh.name.includes("Wrap") || mesh.intersectsMesh(currentMesh)) continue;
+
+            const endpoints = currentMeshObj.getEndpoints();
+            const endpointsMesh = mesh.getObject().getEndpoints();
+
+            const left = endpointsMesh.x.max < endpoints.x.min;
+            const right = endpoints.x.max < endpointsMesh.x.min;
+            const bottom = endpointsMesh.z.max < endpoints.z.min;
+            const top = endpoints.z.max < endpointsMesh.z.min;
+
+            let distanceInfo = (() => {
+              if (top && left)
+                return { 
+                  dist: Math.sqrt((endpoints.x.min - endpointsMesh.x.max) ** 2 + (endpoints.z.max - endpointsMesh.z.min) ** 2),
+                  diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, endpointsMesh.z.min - endpoints.z.max)
+                };
+              else if(left && bottom)
+                return {
+                  dist: Math.sqrt((endpoints.x.min - endpointsMesh.x.max) ** 2 + (endpoints.z.min - endpointsMesh.z.max) ** 2),
+                  diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, endpointsMesh.z.max - endpoints.z.min)
+                };
+
+              else if(bottom && right)
+                return {
+                  dist: Math.sqrt((endpoints.x.max - endpointsMesh.x.min) ** 2 + (endpoints.z.min - endpointsMesh.z.max) ** 2),
+                  diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, endpointsMesh.z.max - endpoints.z.min)
+                };
+
+              else if(right && top)
+                return {
+                  dist: Math.sqrt((endpoints.x.max - endpointsMesh.x.min) ** 2 + (endpoints.z.max - endpointsMesh.z.min) ** 2),
+                  diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, endpointsMesh.z.min - endpoints.z.max)
+                };
+
+              else if(left)
+                return {
+                  dist: endpoints.x.min - endpointsMesh.x.max,
+                  diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, 0)
+                };
+
+              else if(right)
+                return {
+                  dist: endpointsMesh.x.min - endpoints.x.max,
+                  diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, 0)
+                };
+
+              else if(bottom)
+                return {
+                  dist: endpoints.z.min - endpointsMesh.z.max,
+                  diff: new BABYLON.Vector3(0, 0, endpointsMesh.z.max - endpoints.z.min)
+                };
+
+              else if(top)
+                return {
+                  dist: endpointsMesh.z.min - endpoints.z.max,
+                  diff: new BABYLON.Vector3(0, 0, endpointsMesh.z.min - endpoints.z.max)
+                };
+            })();
+
+            if(!distanceInfo) break;
+
+            if (distanceInfo.dist < 2.5) {
+             currentMesh.position.x += distanceInfo.diff.x;
+             currentMesh.position.z += distanceInfo.diff.z;
+             currentMesh.isPin = true;
+             offset = {x: this.scene.pointerX, y: this.scene.pointerY};
+             break;
+           }
+          }
+        }
+
         startingPoint = current;
       }, BABYLON.PointerEventTypes.POINTERMOVE);
 
@@ -284,6 +322,18 @@ class Scene {
               initialWall.addObject(currentMeshObj, xPosition, currentMesh.position.y);
             }
           }
+          if (currentMesh.getObject) {
+            if(currentMesh.getGroupObj){
+              document.getElementById("xPosition").value = currentMesh.getGroupObj().getCenter().x.toFixed(1);
+              document.getElementById("yPosition").value = currentMesh.getGroupObj().getCenter().y.toFixed(1);
+              document.getElementById("zPosition").value = currentMesh.getGroupObj().getCenter().z.toFixed(1);
+            }
+            else{
+              document.getElementById("xPosition").value = currentMesh.getObject().getPosition().x.toFixed(1);
+              document.getElementById("yPosition").value = currentMesh.getObject().getPosition().y.toFixed(1);
+              document.getElementById("zPosition").value = currentMesh.getObject().getPosition().z.toFixed(1);
+            }
+          }
           camera.attachControl(map.engine.getRenderingCanvas(), true);
           startingPoint = null;
           return;
@@ -296,12 +346,33 @@ class Scene {
               document.getElementById("objectControls").style.display = "none";
             }
           });
+          if(evt.pickInfo.pickedMesh === null) return;
           const pickedMesh = evt.pickInfo.pickedMesh;
           if (pickedMesh.getObject) {
             pickedMesh.getObject().pick();
-           document.getElementById("objectControls").style.display = "block";
+
+            document.getElementById("objectControls").style.display = "block";
+
+            document.getElementById("changeSizeX").value = pickedMesh.getObject().width;
+            document.getElementById("changeSizeY").value = pickedMesh.getObject().height;
+            document.getElementById("changeSizeZ").value = pickedMesh.getObject().depth;
+
+            if(pickedMesh.getGroupObj){
+              document.getElementById("xPosition").value = pickedMesh.getGroupObj().getCenter().x.toFixed(1);
+              document.getElementById("yPosition").value = pickedMesh.getGroupObj().getCenter().y.toFixed(1);
+              document.getElementById("zPosition").value = pickedMesh.getGroupObj().getCenter().z.toFixed(1);
+            }
+            else{
+              document.getElementById("xPosition").value = pickedMesh.getObject().getPosition().x.toFixed(1);
+              document.getElementById("yPosition").value = pickedMesh.getObject().getPosition().y.toFixed(1);
+              document.getElementById("zPosition").value = pickedMesh.getObject().getPosition().z.toFixed(1);
+            }
+
+            document.getElementById("rotateObjectY").value = (pickedMesh.getObject().getRotationY() * 180)/Math.PI;
+
             if(pickedMesh.getGroupObj){
               pickedMesh.getGroupObj().pickAll();
+              document.getElementById("rotateObjectY").value = (pickedMesh.getGroupObj().getRotationY() * 180)/Math.PI;
               document.getElementById("unGroup").style.display = 'block';
             }
           }
@@ -320,6 +391,7 @@ class Scene {
       if(this.pickPointerUpObserver){
         document.getElementById("pickObjects").style["background-color"] = '#5c92ea';
         document.getElementById("makeGroup").style.display = 'none';
+        document.getElementById("objectControls").style.display = 'none';
         
         this.scene.meshes.map((item) => {
           if(item.getObject && item.getObject().isPicked){
@@ -362,6 +434,7 @@ class Scene {
 
       document.getElementById("pickObjects").style["background-color"] = '#5c92ea';
       document.getElementById("makeGroup").style.display = 'none';
+      document.getElementById("objectControls").style.display = 'none';
 
       this.scene.onPointerObservable.remove(this.pickPointerUpObserver);
       delete this.pickPointerUpObserver;
@@ -396,7 +469,6 @@ class Scene {
     }
 
     cloneObject(){
-      document.getElementById("objectControls").style.display = "none";
       let objects = [];
       this.scene.meshes.map((item) => {
         if(item.name.includes("Wrap")) return;
@@ -411,27 +483,10 @@ class Scene {
       });
 
       objects.map( (item) => item.clone() );
-
-      /* first version
-      
-      for(let i = 0; i < this.scene.meshes.length; i++) {
-        let item = this.scene.meshes[i];
-        if (item.getObject && item.getObject().isPicked) {
-          if(item.getGroupObj){
-            item.getGroupObj().clone();
-          }
-          else{
-            item.getObject().clone();
-          }
-          break;
-        }
-      }
-      */
     }
 
     deleteObject(){
       document.getElementById("objectControls").style.display = "none";
-      console.log("hi");
       let objects = [];
       this.scene.meshes.map((item) => {
         if(item.name.includes("Wrap")) return;
@@ -446,5 +501,60 @@ class Scene {
         obj.remove();
         item.getObject = null;
       })
+    }
+
+    changeSize(evt){
+      let value = evt.target.value;
+      if(value < 0) evt.target.value = 0.1;
+
+      let targetMesh, height, width, depth;
+      if (evt.target.id.includes('SizeX')) width = value;
+      else if(evt.target.id.includes('SizeY')) height = value;
+      else if(evt.target.id.includes('SizeZ')) depth = value;
+
+      for(let i = 0; i < this.scene.meshes.length; i++){
+        targetMesh = this.scene.meshes[i];
+        if (targetMesh.getObject && targetMesh.getObject().isPicked) {
+          targetMesh.getObject().setSize(height, width, depth);
+          //break;
+        }
+      }
+    }
+
+    rotateObjectY(evt){
+      let targetMesh;
+      for(let i = 0; i < this.scene.meshes.length; i++){
+        targetMesh = this.scene.meshes[i];
+        if (targetMesh.getObject && targetMesh.getObject().isPicked){
+          if(targetMesh.getGroupObj)
+            targetMesh.getGroupObj().rotateY((Math.sign((evt.target.value*Math.PI)/180 - targetMesh.getGroupObj().getRotationY()) * Math.PI)/180);
+          else
+            targetMesh.getObject().rotateY((evt.target.value * Math.PI)/180);
+          break;
+        }
+      }
+    }
+
+    changeObjectPosition(evt){
+      let value = +evt.target.value;
+      let x, y, z, targetMesh;
+      if (evt.target.id.includes('x')) x = value;
+      else if(evt.target.id.includes('y')) y = value;
+      else if(evt.target.id.includes('z')) z = value;
+
+      for(let i = 0; i < this.scene.meshes.length; i++){
+        targetMesh = this.scene.meshes[i];
+
+        if(targetMesh.name.includes("Wrap")) return;        
+
+        if(targetMesh.getObject && targetMesh.getObject().isPicked){
+          if(targetMesh.getGroupObj){
+            targetMesh.getGroupObj().setPosition(x, y, z);
+            return;
+          }
+          else
+            targetMesh.getObject().setPosition(x, y, z);
+        }
+      }
     }
 }
