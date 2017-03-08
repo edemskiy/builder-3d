@@ -111,26 +111,6 @@ class Scene {
             }, 0);
           }
         }
-        return;
-
-        /*
-        if (evt.pickInfo.pickedMesh.getObject) {
-          let pickedWall = evt.pickInfo.pickedMesh.getObject();
-
-          if (pickedWall.getClassName() !== 'TWall')
-            return;
-
-          const pickedPoint = evt.pickInfo.pickedPoint;
-
-          const { objPosition, xPosition } = pickedWall.getDistanceFromLeft(pickedPoint);
-
-          elementsData.map((item) => {
-            if(item === activeObjectElement) {
-              new TConstruct(pickedWall, activeObjectElement, {name: 'window', height: 7, width: 7, depth: 0.5, position: objPosition, xPosition: xPosition});
-            }
-          });
-        }
-        */
       }, BABYLON.PointerEventTypes.POINTERDOWN);
 
       /* POINTER MOVE */   
@@ -191,73 +171,13 @@ class Scene {
         }
         if(axisZ.checked) currentMesh.position.z += diff.z;
 
-        // if(currentMesh.position.x % 40 > 33){
-        //   currentMesh.position.x += Math.sign(diff.x)*(40 - currentMesh.position.x % 40);
-        //   currentMesh.isPin = true;
-        //   offset = {x: this.scene.pointerX, y: this.scene.pointerY};
-        // }
-
         if(objectsStick.checked){
           for(let i = 0; i < this.scene.meshes.length; i++){
+            
             const mesh = this.scene.meshes[i];
             if(mesh === currentMesh || mesh === ground || !mesh.getObject || mesh.name.includes("Wrap") || mesh.intersectsMesh(currentMesh)) continue;
 
-            const endpoints = currentMeshObj.getEndpoints();
-            const endpointsMesh = mesh.getObject().getEndpoints();
-
-            const left = endpointsMesh.x.max < endpoints.x.min;
-            const right = endpoints.x.max < endpointsMesh.x.min;
-            const bottom = endpointsMesh.z.max < endpoints.z.min;
-            const top = endpoints.z.max < endpointsMesh.z.min;
-
-            let distanceInfo = (() => {
-              if (top && left)
-                return { 
-                  dist: Math.sqrt((endpoints.x.min - endpointsMesh.x.max) ** 2 + (endpoints.z.max - endpointsMesh.z.min) ** 2),
-                  diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, endpointsMesh.z.min - endpoints.z.max)
-                };
-              else if(left && bottom)
-                return {
-                  dist: Math.sqrt((endpoints.x.min - endpointsMesh.x.max) ** 2 + (endpoints.z.min - endpointsMesh.z.max) ** 2),
-                  diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, endpointsMesh.z.max - endpoints.z.min)
-                };
-
-              else if(bottom && right)
-                return {
-                  dist: Math.sqrt((endpoints.x.max - endpointsMesh.x.min) ** 2 + (endpoints.z.min - endpointsMesh.z.max) ** 2),
-                  diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, endpointsMesh.z.max - endpoints.z.min)
-                };
-
-              else if(right && top)
-                return {
-                  dist: Math.sqrt((endpoints.x.max - endpointsMesh.x.min) ** 2 + (endpoints.z.max - endpointsMesh.z.min) ** 2),
-                  diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, endpointsMesh.z.min - endpoints.z.max)
-                };
-
-              else if(left)
-                return {
-                  dist: endpoints.x.min - endpointsMesh.x.max,
-                  diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, 0)
-                };
-
-              else if(right)
-                return {
-                  dist: endpointsMesh.x.min - endpoints.x.max,
-                  diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, 0)
-                };
-
-              else if(bottom)
-                return {
-                  dist: endpoints.z.min - endpointsMesh.z.max,
-                  diff: new BABYLON.Vector3(0, 0, endpointsMesh.z.max - endpoints.z.min)
-                };
-
-              else if(top)
-                return {
-                  dist: endpointsMesh.z.min - endpoints.z.max,
-                  diff: new BABYLON.Vector3(0, 0, endpointsMesh.z.min - endpoints.z.max)
-                };
-            })();
+            const distanceInfo = currentMeshObj.getDistanceFromObject(mesh.getObject());
 
             if(!distanceInfo) break;
 

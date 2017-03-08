@@ -166,4 +166,62 @@ class TRigid extends TObject {
          }
       };
    }
+
+   getDistanceFromObject(object){
+      const endpoints = this.getEndpoints();
+      const endpointsMesh = object.getEndpoints();
+
+      const left = endpointsMesh.x.max < endpoints.x.min;
+      const right = endpoints.x.max < endpointsMesh.x.min;
+      const bottom = endpointsMesh.z.max < endpoints.z.min;
+      const top = endpoints.z.max < endpointsMesh.z.min;
+
+      if (top && left)
+        return { 
+         dist: Math.sqrt((endpoints.x.min - endpointsMesh.x.max) ** 2 + (endpoints.z.max - endpointsMesh.z.min) ** 2),
+         diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, endpointsMesh.z.min - endpoints.z.max)
+      };
+
+      else if(left && bottom)
+        return {
+         dist: Math.sqrt((endpoints.x.min - endpointsMesh.x.max) ** 2 + (endpoints.z.min - endpointsMesh.z.max) ** 2),
+         diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, endpointsMesh.z.max - endpoints.z.min)
+      };
+
+      else if(bottom && right)
+        return {
+         dist: Math.sqrt((endpoints.x.max - endpointsMesh.x.min) ** 2 + (endpoints.z.min - endpointsMesh.z.max) ** 2),
+         diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, endpointsMesh.z.max - endpoints.z.min)
+      };
+
+      else if(right && top)
+        return {
+         dist: Math.sqrt((endpoints.x.max - endpointsMesh.x.min) ** 2 + (endpoints.z.max - endpointsMesh.z.min) ** 2),
+         diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, endpointsMesh.z.min - endpoints.z.max)
+      };
+
+      else if(left)
+        return {
+         dist: endpoints.x.min - endpointsMesh.x.max,
+         diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, 0)
+      };
+
+      else if(right)
+        return {
+         dist: endpointsMesh.x.min - endpoints.x.max,
+         diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, 0)
+      };
+
+      else if(bottom)
+        return {
+         dist: endpoints.z.min - endpointsMesh.z.max,
+         diff: new BABYLON.Vector3(0, 0, endpointsMesh.z.max - endpoints.z.min)
+      };
+
+      else if(top)
+        return {
+         dist: endpointsMesh.z.min - endpoints.z.max,
+         diff: new BABYLON.Vector3(0, 0, endpointsMesh.z.min - endpoints.z.max)
+      };
+   }
 };
