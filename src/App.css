@@ -1,0 +1,132 @@
+html, body {
+   overflow: hidden;
+   width: 100%;
+   height: 100%;
+   margin: 0;
+   padding: 0;
+}
+#renderCanvas {
+   width: 100%;
+   height: 100%;
+   touch-action: none;
+}
+.main{
+   position: absolute;
+   top: 0;
+   z-index: 1;
+}
+.btn{
+   display: block;
+   //width: 140px;
+   padding: 10px;
+   margin: 5px;
+   border: 1px solid #000;
+   background-color: #5c92ea;
+   color: #FFF;
+}
+.btn:hover{
+   background-color: #698ac0;
+}
+.hidden{
+   //display: none;
+}
+.controls{
+   display: flex;
+   flex-direction: column;
+   flex-wrap: wrap;
+   align-items: flex-start;
+}
+.flex-row{
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   flex-wrap: wrap;
+   justify-content: space-around;
+}
+.content-start{
+   justify-content: flex-start;
+}
+.elements-block{
+   border: 2px solid;
+   background-color: #ebebeb;
+   margin: 2px;
+}
+.sett-block{
+   margin: 5px;
+   padding: 5px;
+   background-color: #d6d5ed;
+   border: 1px solid;
+}
+.changeSize input, .rotateY input{
+   width: 50px;
+   margin: 5px 5px 5px 0;
+   padding: 2px;
+}
+
+.styled-select {
+   background: url(http://i62.tinypic.com/15xvbd5.png) no-repeat 94% 0;
+   height: 29px;
+   overflow: hidden;
+   width: 150px;
+   background-color: #FFF;
+   margin: 5px;
+   border: 1px solid;
+}
+
+.styled-select select{
+   background: transparent;
+   border: none;
+   font-size: 14px;
+   height: 29px;
+   padding: 5px;
+   width: 165px;
+}
+.checkbox{
+  vertical-align: top;
+  margin: 0 3px 0 0;
+  width: 17px;
+  height: 17px;
+}
+.checkbox + label {
+  cursor: pointer;
+}
+.checkbox:not(checked) {
+  position: absolute;
+  opacity: 0;
+}
+.checkbox:not(checked) + label {
+  position: relative; /* будем позиционировать псевдочекбокс относительно label */
+  padding: 0 0 0 45px; /* оставляем слева от label место под псевдочекбокс */
+}
+/* Оформление первой части чекбокса в выключенном состоянии (фон). */
+.checkbox:not(checked) + label:before {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: 2px;
+  width: 34px;
+  height: 17px;
+  border: 1px solid;
+  background: #b0b4bf;
+  box-shadow: inset 0 2px 3px rgba(0,0,0,.2);
+}
+/* Оформление второй части чекбокса в выключенном состоянии (переключатель). */
+.checkbox:not(checked) + label:after {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 4px;
+  width: 14px;
+  height: 14px;
+  background: #FFF;
+  box-shadow: 0 2px 5px rgba(0,0,0,.3);
+  transition: all .2s; /* анимация, чтобы чекбокс переключался плавно */
+}
+/* Меняем фон чекбокса, когда он включен. */
+.checkbox:checked + label:before {
+  background: #4492ff;
+}
+/* Сдвигаем переключатель чекбокса, когда он включен. */
+.checkbox:checked + label:after {
+  left: 20px;
+}
