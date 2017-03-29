@@ -6,11 +6,19 @@ import {createStore, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 
+import ObjectInteraction from './controls/ObjectInteraction'
+
 import Reducers from './reducers/index';
 
+let ObjInt = new ObjectInteraction();
+
 let store = createStore(Reducers, 
-	applyMiddleware(thunk)
-	);
+	applyMiddleware(
+		thunk,
+		ObjInt.changeEmitterMiddleware
+	));
+
+ObjInt.setStore(store);
 
 ReactDOM.render(
 	<Provider store={store}>

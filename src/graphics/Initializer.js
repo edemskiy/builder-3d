@@ -13,7 +13,6 @@ class Initializer {
 		this.scene = scene;
 		this.engine = engine;
 		this.canvas = engine.getRenderingCanvas();
-
 	}
 
 	createDefaultCamera(){

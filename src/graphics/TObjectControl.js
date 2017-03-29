@@ -1,5 +1,6 @@
 const BABYLON = window.BABYLON;
 import TGroup from '../graphics/TGroup'
+import { DefaultGround } from '../constants/initializer'
 
 class TObjectControl{
 	constructor(scene){
@@ -22,107 +23,35 @@ class TObjectControl{
 		});
 	}
 
-	pickObjects(pickObs, pDownObs, pMoveObs, pUpObs){
 
-      if(pickObs){ 
-        this.scene.meshes.forEach((item) => {
-          if(item.getObject && item.getObject().isPicked){
-            item.getObject().unpick();
-          }
-        });
-
-        this.groupObjects();
-        return;
-      }
-      this.scene.onPointerObservable.remove(pDownObs);
-      this.scene.onPointerObservable.remove(pMoveObs);
-      this.scene.onPointerObservable.remove(pUpObs);
-
-      const pickPointerUpObserver = this.scene.onPointerObservable.add((evt) => {
-        
-        if(evt.pickInfo.pickedMesh === null) return;
-
-        if(evt.pickInfo.pickedMesh.getObject){
-          const pickedMeshObj = evt.pickInfo.pickedMesh.getObject();
-          if (pickedMeshObj.isPicked){
-            if(pickedMeshObj.getGroupObj){
-              pickedMeshObj.getGroupObj().unpickAll();
-              return;
-            }
-            pickedMeshObj.unpick();
-          }
-          else{
-            if(pickedMeshObj.getGroupObj){
-              pickedMeshObj.getGroupObj().pickAll();
-              return;
-            }
-            pickedMeshObj.pick();
-          }
-        }
-      }, BABYLON.PointerEventTypes.POINTERUP);
-      return pickPointerUpObserver;
+  groupObjects(objects){
+    if(objects.length > 1) {
+      new TGroup(objects);
+      objects.forEach( object => object.getObject().unpick() );
     }
+  }
 
-    groupObjects(pickedObjects, pickObs, pDownObs, pMoveObs, pUpObs){
+  ungroupObjects(objects){
+    objects.forEach( (item) => {        
+      item.getObject().unpick();
+      delete item.getObject().group;
+      item.getGroupObj = null;
+      item.getObject().getGroupObj = null;
+    });
+  }
 
-      this.scene.onPointerObservable.remove(pickObs);
-      pickObs = undefined;
+  cloneObjects(objects){
+    objects.forEach( (item) => item.getObject().clone() );
+  }
 
-      const pointerDownObserver = this.scene.onPointerObservable.add(pDownObs.callback, BABYLON.PointerEventTypes.POINTERDOWN);
-      const pointerMoveObserver = this.scene.onPointerObservable.add(pMoveObs.callback, BABYLON.PointerEventTypes.POINTERMOVE);
-      const pointerUpObserver = this.scene.onPointerObservable.add(pUpObs.callback, BABYLON.PointerEventTypes.POINTERUP);  
-
-      if(pickedObjects.length > 1){
-      	new TGroup(pickedObjects);
-      }
-
-      return {pointerDownObserver, pointerMoveObserver, pointerUpObserver};
-    }
-
-    ungroupObjects(){
-      this.scene.meshes.forEach((item) => {
-        if(item.getObject && item.getObject().isPicked){
-          item.getObject().unpick();
-          delete item.getObject().group;
-          item.getGroupObj = null;
-          item.getObject().getGroupObj = null;
-        }
-      });
-    }
-
-    cloneObject(){
-      let objects = [];
-      this.scene.meshes.forEach((item) => {
-        if(item.name.includes("Wrap")) return;
-        
-        if(item.getObject && item.getObject().isPicked)
-          if(item.getGroupObj){
-            objects.push(item.getGroupObj());
-            item.getGroupObj().unpickAll();
-          }
-          else
-            objects.push(item.getObject());
-      });
-
-      objects.forEach( (item) => item.clone() );
-    }
-
-    deleteObject(){
-      let objects = [];
-      this.scene.meshes.forEach((item) => {
-        if(item.name.includes("Wrap")) return;
-        
-        if(item.getObject && item.getObject().isPicked)
-            objects.push(item);
-      });
-
-      objects.forEach((item) => {
-        let obj = item.getObject();
-        obj.unpick();
-        obj.remove();
-        item.getObject = null;
-      })
-    }
+  deleteObjects(objects){
+    objects.forEach((item) => {
+      let obj = item.getObject();
+      obj.unpick();
+      obj.remove();
+      item.getObject = null;
+    });
+  }
 
     changeSize(evt){
       let value = evt.target.value;
@@ -178,6 +107,26 @@ class TObjectControl{
         }
       }
     }
+    adheranceObject(currentMesh){
+      const ground = this.scene.meshes.filter( (mesh) => mesh.name === DefaultGround.name )[0];
+      for(let i = 0; i < this.scene.meshes.length; i++){
+
+        const mesh = this.scene.meshes[i];
+        if(mesh === currentMesh || mesh === ground || !mesh.getObject || mesh.name.includes("Wrap") || mesh.intersectsMesh(currentMesh)) continue;
+
+        const distanceInfo = currentMesh.getObject().getDistanceFromObject(mesh.getObject());
+
+        if(!distanceInfo) break;
+
+        if (distanceInfo.dist < 2.5) {
+         currentMesh.position.x += distanceInfo.diff.x;
+         currentMesh.position.z += distanceInfo.diff.z;
+         currentMesh.isPin = true;
+         //offset = {x: this.scene.pointerX, y: this.scene.pointerY}; // ???
+         break;
+       }
+     }
+   }
 }
 
 export default TObjectControl;

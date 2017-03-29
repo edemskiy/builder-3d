@@ -15,20 +15,27 @@ html, body {
    top: 0;
    z-index: 1;
 }
-.btn{
-   display: block;
-   //width: 140px;
+button{
    padding: 10px;
    margin: 5px;
    border: 1px solid #000;
-   background-color: #5c92ea;
    color: #FFF;
 }
-.btn:hover{
+.blue{
+   background-color: #5c92ea;
+ }
+.green{
+   background-color: #12b619;
+ }
+.blue:hover{
    background-color: #698ac0;
 }
+.green:hover{
+  background-color: #33c539;
+}
+
 .hidden{
-   //display: none;
+   display: none !important;
 }
 .controls{
    display: flex;

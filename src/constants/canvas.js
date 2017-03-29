@@ -1,12 +1,9 @@
 export const Events = {
 	newSceneState: "NEW:SCENE:STATE",
-	newPickedObjects: "NEW:PICKEDOBJECTS",
-	deletePickedObjects: "DELETE:PICKEDOBJECTS",
-	clearPickedObjects: "CLEAR:PICKEDOBJECTS"
+	setObjectsInteraction: "SET:OBJECTSINTERACTION"
 };
 
 export const Canvas = {
 	scene: 'scene',
-	pickedObjects: 'pickedObjects',
 	mouseControllerState: 'mouseControllerState'
 };

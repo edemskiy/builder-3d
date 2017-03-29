@@ -1,5 +1,5 @@
 import { Events } from '../constants/canvas';
-import { Events as MouseEvents, EventsState as MouseEventsState } from '../constants/mouseEventsController';
+import { Events as MouseEvents} from '../constants/mouseEventsController';
 
 export const setScene = (scene) => {
 	return {
@@ -35,9 +35,9 @@ export const setMouseProcessingState = (newMouseState) => {
 	}
 }
 
-export const setObjectsInteraction = (newObjectsInterction) => {
+export const setObjectsInteraction = (newObjectsInteraction) => {
 	return {
 		type: Events.setObjectsInteraction,
-		newObjectsInterction
+		value: newObjectsInteraction
 	}
 }
