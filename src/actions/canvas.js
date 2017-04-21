@@ -41,3 +41,38 @@ export const setObjectsInteraction = (newObjectsInteraction) => {
 		value: newObjectsInteraction
 	}
 }
+
+export const setActiveControlMenu = (newActiveControlMenu) => {
+	return {
+		type: Events.setActiveControlMenu,
+		newActiveControlMenu
+	}
+}
+
+export const addTexture = (newTexture) => {
+	return {
+		type: Events.addTexture,
+		value: newTexture
+	}
+}
+
+export const deleteTexture = (textureName) => {
+	return {
+		type: Events.deleteTexture,
+		textureName
+	}
+}
+
+export const addCustomObject = (object) => {
+	return {
+		type: Events.addCustomObject,
+		object
+	}
+}
+
+export const deleteCustomObject = (objectName) => {
+	return {
+		type: Events.deleteCustomObject,
+		objectName
+	}
+}

@@ -5,13 +5,16 @@ import TObject from './TObject.js'
 class TRigid extends TObject {
    constructor(scene) {
       super();
-      this.scene = scene
+      
+      this.scene = scene;
       let material = new BABYLON.StandardMaterial('material', this.scene);
       this.material = material;
       this.collision = true;
       this.addingMode = 'union';
       this.isPicked = false;
       this.isPinned = false;
+
+      this.rotation = 0;
    }
 
    getPosition() {
@@ -25,7 +28,9 @@ class TRigid extends TObject {
       if(y === undefined) y = this.getPosition().y;
       if(z === undefined) z = this.getPosition().z;
 
-      this.getMesh().position = new BABYLON.Vector3(x,y,z);
+
+      const diff = new BABYLON.Vector3(x,y,z).subtract(this.getPosition());
+      this.move(diff, {x:true, y:true, z:true});
    }
 
    rotateY(alpha) {
@@ -47,25 +52,37 @@ class TRigid extends TObject {
    }
 
    setTexture(name) {
-      this.material.diffuseTexture = new BABYLON.Texture(name, this.scene);
+      this.material.diffuseTexture = new BABYLON.Texture('data:name'+name.length, this.scene, true,
+                  true, BABYLON.Texture.BILINEAR_SAMPLINGMODE,
+                  null, null, name, true);
       this.setMaterial(this.material);
    }
 
    scaleTexture(scale) {
       scale = 1/scale;
-      this.getMesh().material.subMaterials[1].diffuseTexture.uScale = scale;
-      this.getMesh().material.subMaterials[1].diffuseTexture.vScale = scale;
+      // this.getMesh().material.subMaterials[1].diffuseTexture.uScale = scale;
+      // this.getMesh().material.subMaterials[1].diffuseTexture.vScale = scale;
 
-      this.getMesh().material.subMaterials[1].diffuseTexture.uOffset = (1 - scale)/2;
-      this.getMesh().material.subMaterials[1].diffuseTexture.vOffset = (1 - scale)/2;
+      // this.getMesh().material.subMaterials[1].diffuseTexture.uOffset = (1 - scale)/2;
+      // this.getMesh().material.subMaterials[1].diffuseTexture.vOffset = (1 - scale)/2;
+
+
+      this.getMesh().material.diffuseTexture.uScale = scale;
+      this.getMesh().material.diffuseTexture.vScale = scale;
+
+      this.getMesh().material.diffuseTexture.uOffset = (1 - scale)/2;
+      this.getMesh().material.diffuseTexture.vOffset = (1 - scale)/2;
+
    }
 
    offsetTextureX(offset) {
-      this.getMesh().material.subMaterials[1].diffuseTexture.uOffset -= offset;
+      //this.getMesh().material.subMaterials[1].diffuseTexture.uOffset = offset;
+      this.getMesh().material.diffuseTexture.uOffset = offset;
    }
 
    offsetTextureY(offset) {
-      this.getMesh().material.subMaterials[1].diffuseTexture.vOffset -= offset;
+      //this.getMesh().material.subMaterials[1].diffuseTexture.vOffset = offset;
+      this.getMesh().material.diffuseTexture.vOffset = offset;
    }
 
    pick(){
@@ -95,6 +112,11 @@ class TRigid extends TObject {
    }
 
    setSize(height, width, depth) {
+      let wall;
+      if(this.getMesh().getContainingWall){
+         wall = this.getMesh().getContainingWall();
+         wall.deleteObject(this, this.getPosition());
+      }
 
       height = height || this.height;
       width = width || this.width;
@@ -110,10 +132,15 @@ class TRigid extends TObject {
       this.height = height;
       this.width = width;
       this.depth = depth;
+
+      if(wall)
+         wall.addObject(this);
    }
    
    rotateAroundPoint(point, alpha){
-      this.rotateY(this.getRotationY() + alpha);
+      const alphaOld = alpha;
+      alpha -= this.getRotationY();
+      this.rotateY(alphaOld);
       const objPosition = this.getPosition();
 
       this.getMesh().position.x = point.x + (objPosition.x - point.x)*Math.cos(alpha) - (objPosition.z - point.z)*Math.sin(-alpha);
@@ -128,13 +155,13 @@ class TRigid extends TObject {
       const constr = this.getMesh().getObject().constructor;
       let tmp = new constr(this.args);
       
-      tmp.getMesh().material = tmp.material = this.material;
-      tmp.rotateY(this.getRotationY());
-      tmp.getMesh().scaling = new BABYLON.Vector3(this.getMesh().scaling.x, this.getMesh().scaling.y, this.getMesh().scaling.z) ;
-      
-      const pos = this.getPosition();
-      const endpoints = this.getEndpoints();
-      tmp.setPosition(pos.x + endpoints.x.max - endpoints.x.min + 5, pos.y, pos.z);
+         tmp.getMesh().material = tmp.material = this.material.clone();
+         tmp.rotateY(this.getRotationY());
+         tmp.getMesh().scaling = new BABYLON.Vector3(this.getMesh().scaling.x, this.getMesh().scaling.y, this.getMesh().scaling.z) ;
+         
+         const pos = this.getPosition();
+         const endpoints = this.getEndpoints();
+         tmp.setPosition(pos.x + endpoints.x.max - endpoints.x.min + 5, pos.y, pos.z);
 
       return tmp;
    }

@@ -17,8 +17,8 @@ class Canvas extends Component {
 
 		this.initializer.createDefaultCamera();
 		this.initializer.createDefaultGround();
-		this.initializer.createDefaultLight();		
-		this.initializer.createDefaultRoom();		
+		this.initializer.createDefaultLight();
+		this.initializer.createDefaultRoom();
 
 		this.props.setNewScene(this.initializer.scene);
 

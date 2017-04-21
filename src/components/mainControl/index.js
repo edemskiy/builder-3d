@@ -50,16 +50,6 @@ class MainControl extends Component {
 			    	<button  onClick={ () => this.pickObjects() } className="blue" ref='pickObjects' id="pickObjects">Выделение объектов</button>
 			    	<button  onClick={ () => this.groupObjects() } className="blue hidden" ref='groupObjects' id="makeGroup">Сгруппировать</button>
 		    	</div>
-		    	<div className="flex-row">
-			    	<div className="styled-select">
-				    	<select className="select" id="selectAddingObject">
-					    	<option>Блок</option>
-					    	<option>sample1</option>
-					    	<option>sample2</option>
-				    	</select>
-			    	</div>
-			    	<button className="blue" id="addObject">Добавить</button>
-		    	</div>
 	    	</div>
 	    );
 	}

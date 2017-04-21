@@ -8,7 +8,7 @@ class TObjectControl{
 	}
 
 	getMeshPosition(mesh){
-		return BABYLON.Vector3(mesh.position.x, mesh.position.y, mesh.position.z);
+		return new BABYLON.Vector3(mesh.position.x, mesh.position.y, mesh.position.z);
 	}
 
 	getOffset(){
@@ -17,6 +17,10 @@ class TObjectControl{
 
 	move(objects, diff, check){
 		objects.forEach( (mesh) => {
+      if(mesh.getObject && (mesh.getObject().getClassName() === "TWall" || mesh.getObject().getClassName() === "T3DObject")){
+        mesh.getObject().move(diff,check);
+        return;
+      }
 			if(check.x) mesh.position.x += diff.x;
 			if(check.y) mesh.position.y += diff.y;
 			if(check.z) mesh.position.z += diff.z;
@@ -25,6 +29,7 @@ class TObjectControl{
 
 
   groupObjects(objects){
+    this.ungroupObjects(objects);
     if(objects.length > 1) {
       new TGroup(objects);
       objects.forEach( object => object.getObject().unpick() );
@@ -46,6 +51,13 @@ class TObjectControl{
 
   deleteObjects(objects){
     objects.forEach((item) => {
+      if(item.getObject().getMesh(1)){
+        for(let key in item.getObject().getMesh(1)){
+          item.getObject().getMesh(1)[key].remove();
+          item.getObject().getMesh(1)[key].getObject = null;
+        }
+      }
+      if(item.getContainingWall) item.getContainingWall().deleteObject(item.getObject(), item.position);
       let obj = item.getObject();
       obj.unpick();
       obj.remove();

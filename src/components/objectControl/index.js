@@ -3,13 +3,13 @@ import { EventsState as ObjInteractionEventsState } from  '../../constants/objec
 import { setObjectsInteraction } from '../../actions/canvas'
 
 import { setAxisRestrictions, setAdheranceObjects } from '../../actions/pickedObjects'
-//import { Canvas } from '../../constants/canvas'
+import { Canvas } from '../../constants/canvas'
 import { PickedObjects } from '../../constants/pickedObjects'
 import {connect} from 'react-redux';
 
 class ObjectControl extends Component {
    componentDidUpdate(prevProps){
-      if(this.props.pickedObjects.size > 0)
+      if(this.props.pickedObjects.size > 0 && this.props.activeControlMenu === "ObjectsMenu")
          this.refs.main.classList.remove('hidden');
       else
          this.refs.main.classList.add('hidden');
@@ -71,7 +71,8 @@ class ObjectControl extends Component {
 
    changeRotation(){
       this.groupObject ? 
-         this.groupObject.rotateY((Math.sign((this.refs.rotateY.value*Math.PI)/180 - this.currentMeshObject.getGroupObj().getRotationY()) * Math.PI)/180) :
+         //this.groupObject.rotateY((Math.sign((this.refs.rotateY.value*Math.PI)/180 - this.currentMeshObject.getGroupObj().getRotationY()) * Math.PI)/180) :
+         this.groupObject.rotateY((+this.refs.rotateY.value * Math.PI)/180) :
          this.currentMeshObject.rotateY((+this.refs.rotateY.value * Math.PI)/180);
    }
 
@@ -95,9 +96,9 @@ class ObjectControl extends Component {
          </div>
 
          <div className="changeSize sett-block flex-row" id="changeSize" ref="changeSize" onChange={ () => this.changeSize() }>
-            <div> Ширина: <input type="number" name="rangeX" min="1" id="changeSizeX" ref="widthInput" /> </div>
-            <div> Высота: <input type="number" name="rangeY" min="1" id="changeSizeY" ref="heightInput" /> </div>
-            <div> Глубина: <input type="number" name="rangeZ" min="1" id="changeSizeZ" ref="depthInput" /> </div>
+            <div> Ширина: <input type="number" name="rangeX" min="0.1" step="0.1" id="changeSizeX" ref="widthInput" /> </div>
+            <div> Высота: <input type="number" name="rangeY" min="0.1" step="0.1" id="changeSizeY" ref="heightInput" /> </div>
+            <div> Глубина: <input type="number" name="rangeZ" min="0.1" step="0.1" id="changeSizeZ" ref="depthInput" /> </div>
          </div>
 
          <div className="flex-row rotateY">
@@ -105,9 +106,9 @@ class ObjectControl extends Component {
             Поворот: <input type="number" name="rotateY" id="rotateObjectY" ref="rotateY" />
             </div>
             <div className="sett-block flex-row" id="changePosition" onChange={ () => this.changePosition() }>
-               <div>x: <input type="number" id="xPosition" ref="xPosition"/></div>
-               <div>y: <input type="number" id="yPosition" ref="yPosition"/></div>
-               <div>z: <input type="number" id="zPosition" ref="zPosition"/></div>
+               <div>x: <input type="number" step="0.1" id="xPosition" ref="xPosition"/></div>
+               <div>y: <input type="number" step="0.1" id="yPosition" ref="yPosition"/></div>
+               <div>z: <input type="number" step="0.1" id="zPosition" ref="zPosition"/></div>
             </div>
          </div>
 
@@ -154,6 +155,7 @@ const mapStateCanvasProps = (state, ownProps) => {
       sizeChange: state.pickedObjects.get(PickedObjects.isSizeChanged),
       rotationChange: state.pickedObjects.get(PickedObjects.isRotationChanged),
       textureChange: state.pickedObjects.get(PickedObjects.isTextureChanged),
+      activeControlMenu: state.canvas.get(Canvas.activeControlMenu)
       //mouseControllerState: state.canvas.get(Canvas.mouseControllerState)
    }
 };

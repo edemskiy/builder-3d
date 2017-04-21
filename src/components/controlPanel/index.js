@@ -2,15 +2,23 @@ import React, { Component } from 'react';
 
 import MainControl from '../mainControl/index'
 import ObjectControl from '../objectControl/index'
+import ObjectsMenu from '../objectsMenu/index'
+import TexturesControl from '../texturesControl/index'
 
 class ConrolPanel extends Component {
   render() {
     return (
-      <div className="main">
-      	<div className="controls">
-	      	<MainControl/>
-	      	<ObjectControl/>
-	    </div>
+      <div>
+        <div className="main contols">
+        	<div className="controls">
+  	      	<MainControl/>
+  	      	<ObjectControl/>
+            <TexturesControl/>
+          </div>
+        </div>
+        <div className="main obj-menu">
+            <ObjectsMenu/>
+        </div>
       </div>
     );
   }

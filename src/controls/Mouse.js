@@ -96,6 +96,27 @@ class Mouse extends Component{
 			case MouseEventsState.base: 
 				if (this.startingPoint) {
 					this.props.scene.activeCamera.attachControl(this.props.scene.getEngine().getRenderingCanvas(), true);
+
+					if(this.currentMesh.getObject().getClassName() === "T3DObject")
+						for(let i = 0; i < this.props.scene.meshes.length; i++){
+							let tmpMesh = this.props.scene.meshes[i];
+							if(!tmpMesh.getObject) continue;
+							if(this.currentMesh.getContainingWall)
+									this.currentMesh.getContainingWall().deleteObject(this.currentMesh.getObject(), this.beginPosition);
+							if(tmpMesh.intersectsMesh(this.currentMesh) && tmpMesh.getObject().getClassName() === "TWall"){
+
+								if(tmpMesh.getObject().isFreeSpace(this.currentMesh.getObject())){
+									this.currentMesh.position = tmpMesh.getObject().getAddingObjPosition(this.currentMesh.position);
+								}
+								else
+									this.currentMesh.position = this.beginPosition;
+
+								tmpMesh.getObject().addObject(this.currentMesh.getObject());
+								break;
+
+							}
+						}
+
 					this.startingPoint = null;
 					break;
 				}
@@ -103,7 +124,6 @@ class Mouse extends Component{
 					this.props.scene.meshes.forEach((item) => {
 						if(item.getObject){
 							item.getObject().unpick();
-
 						}
 					});
 					this.props.clrPickedObjects();

@@ -8,7 +8,7 @@ import TFloor from './TFloor'
 
 class TRoom extends TRigid {
    constructor(height, width, length, name, scene) {
-      super(scene);
+      super(scene);  
       this.name = name;
       let depth = 0.5;     
 
@@ -35,8 +35,8 @@ class TRoom extends TRigid {
       // this.ceiling = ceiling;
 
       this.setPosition(0, 0, 0);
-      this.setWallsFrontTexture('./textures/wall.jpg');
-      this.setWallsBackTexture('./textures/wall.jpg');
+      this.setWallsFrontTexture('brickTexture');
+      this.setWallsBackTexture('brickTexture');
 
       this.meshArr[0] = {
          floor,

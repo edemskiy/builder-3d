@@ -4,6 +4,9 @@ import Immutable from 'immutable';
 
 export const state = Immutable.Map([
 	[Canvas.scene, null],
-	[Canvas.mouseControllerState, MouseEventsState.base]
+	[Canvas.mouseControllerState, MouseEventsState.base],
+	[Canvas.activeControlMenu, "ObjectsMenu"],
+	[Canvas.textures, Immutable.Map()],
+	[Canvas.customObjects, Immutable.Map()]
 ]);
 
