@@ -27,7 +27,6 @@ class TObjectControl{
 		});
 	}
 
-
   groupObjects(objects){
     this.ungroupObjects(objects);
     if(objects.length > 1) {

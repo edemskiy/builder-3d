@@ -104,12 +104,11 @@ class TWall extends TRigid {
    }
 
    isFreeSpace(addingObject) {
-      let a = Object.keys(this.meshArr[1]).every( (item) => {
-         if(this.meshArr[1][item] === addingObject) return true;
+      return Object.keys(this.meshArr[1]).every( (item) => {
+         if(this.meshArr[1][item] === addingObject)
+            return true;
          return !this.meshArr[1][item].getMesh().intersectsMesh(addingObject.getMesh())
       });
-      //console.log(a);
-      return a;
    }
 
    addObject(addingObject) {

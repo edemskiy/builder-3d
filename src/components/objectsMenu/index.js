@@ -26,10 +26,6 @@ class ObjectsMenu extends Component {
 					"constructor": TWall,
 					"defParams": {height: 20, width: 50, depth:0.5, name: "defName", scene: this.props.scene}
 				},
-				"TWindow": {
-					"constructor": T3DObject,
-					"defParams": {name: "window", position: {x:0, y:4, z:0}, scene: this.props.scene }
-				},
 				"TFloor": {
 					"constructor": TFloor,
 					"defParams": {height: 40, width: 40, depth:0.5, name: "defName", scene: this.props.scene}
@@ -40,14 +36,24 @@ class ObjectsMenu extends Component {
 	addMesh(){
 		let name = Object.keys(this.refs).filter( (item) => this.refs[item].name === "Objects" && this.refs[item].checked)[0];
 		if(name){
-			let newMesh = new T3DObject({name, src: "data:" + this.props.customObjects.get(name), scene: this.props.scene});
+			let newMesh;
+			if(Object.keys(this.objects).some(item => item === name))
+				newMesh = new this.objects[name].constructor(this.objects[name].defParams);
+			else
+				newMesh = new T3DObject({name, src: "data:" + this.props.customObjects.get(name), scene: this.props.scene});
 		}
 	}
 
-	setTexture(src){
+	setTexture(){
+		const src = this.props.textures.get(Object.keys(this.refs).filter( (item) => this.refs[item].name === "Texures" && this.refs[item].checked)[0]);
 		if(this.props.pickedObjects.size !== 0){
 			this.props.pickedObjects.last().getObject().setTexture(src);
 		}
+	}
+	removeTexture(){
+		const name = Object.keys(this.refs).filter( (item) => this.refs[item].name === "Texures" && this.refs[item].checked)[0];
+		if(name)
+			this.props.deleteTextureByName(name);
 	}
 	uploadTexture(){
 		let files = this.refs.textureUploader.files;
@@ -85,20 +91,14 @@ class ObjectsMenu extends Component {
 		    		<input className="search" type="text" placeholder="поиск"/>
 		    		{
 		    			this.props.activeControlMenu === "ObjectsMenu" &&
-		    			<button className="blue" onClick={ () => {
-		    				this.addMesh();
-		    			}}>Добавить</button>
+		    			<button className="blue" onClick={ () => this.addMesh() }>Добавить</button>
 		    		}
 		    		
 		    		{
 		    			this.props.activeControlMenu === "TexturesMenu" &&
 		    			<div className="flex-row">
-		    			<button className="blue" onClick={ () => {
-		    				this.setTexture(this.props.textures.get(Object.keys(this.refs).filter( (item) => this.refs[item].name === "Texures" && this.refs[item].checked)[0]))
-		    			}}>Установить</button>
-		    			<button className="blue" onClick={ () => {
-		    				this.props.deleteTextureByName(Object.keys(this.refs).filter( (item) => this.refs[item].name === "Texures" && this.refs[item].checked)[0]);
-		    			}}>Удалить из списка</button>
+		    			<button className="blue" onClick={ () => this.setTexture() }>Установить</button>
+		    			<button className="blue" onClick={ () => this.removeTexture() }>Удалить из списка</button>
 		    			</div>
 		    		}
 		    		

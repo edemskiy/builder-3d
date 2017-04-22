@@ -5,7 +5,7 @@ import TObject from './TObject.js'
 class TRigid extends TObject {
    constructor(scene) {
       super();
-      
+
       this.scene = scene;
       let material = new BABYLON.StandardMaterial('material', this.scene);
       this.material = material;
@@ -140,7 +140,7 @@ class TRigid extends TObject {
    rotateAroundPoint(point, alpha){
       const alphaOld = alpha;
       alpha -= this.getRotationY();
-      this.rotateY(alphaOld);
+      this.rotateY(alpha + this.getRotationY());
       const objPosition = this.getPosition();
 
       this.getMesh().position.x = point.x + (objPosition.x - point.x)*Math.cos(alpha) - (objPosition.z - point.z)*Math.sin(-alpha);
