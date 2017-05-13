@@ -4,7 +4,7 @@ import TRigid from './TRigid.js'
 
 class TCutout extends TRigid{
 	constructor(options){
-		super(options.scene);
+		super(options);
 		this.name = options.name;
 		this.height = options.height;
 		this.width = options.width;

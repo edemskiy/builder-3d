@@ -9,4 +9,3 @@ export const state = Immutable.Map([
 	[Canvas.textures, Immutable.Map()],
 	[Canvas.customObjects, Immutable.Map()]
 ]);
-

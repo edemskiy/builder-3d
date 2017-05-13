@@ -11,7 +11,6 @@ class Initializer {
 		scene.gravity = new BABYLON.Vector3(0, -2, 0);
 
 		this.scene = scene;
-		this.engine = engine;
 		this.canvas = engine.getRenderingCanvas();
 	}
 

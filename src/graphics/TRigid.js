@@ -3,18 +3,22 @@ const BABYLON = window.BABYLON;
 import TObject from './TObject.js'
 
 class TRigid extends TObject {
-   constructor(scene) {
+   constructor(options) {
       super();
 
-      this.scene = scene;
+      this.scene = options.scene;
       let material = new BABYLON.StandardMaterial('material', this.scene);
       this.material = material;
-      this.collision = true;
-      this.addingMode = 'union';
+      //this.collision = true;
       this.isPicked = false;
       this.isPinned = false;
-
       this.rotation = 0;
+
+      this.height = options.height;
+      this.width = options.width;
+      this.depth = options.depth;
+
+      this.name = options.name;
    }
 
    getPosition() {
@@ -33,6 +37,18 @@ class TRigid extends TObject {
       this.move(diff, {x:true, y:true, z:true});
    }
 
+   move(diff, check){
+         if(check.x){this.getMesh().position.x += diff.x;}
+         if(check.y){this.getMesh().position.y += diff.y;}
+         if(check.z){this.getMesh().position.z += diff.z;}
+
+         for(let key in this.getMesh(1)){
+            if(check.x) this.getMesh(1)[key].getMesh().position.x += diff.x;
+            if(check.y) this.getMesh(1)[key].getMesh().position.y += diff.y;
+            if(check.z) this.getMesh(1)[key].getMesh().position.z += diff.z;
+         }
+   }
+   
    rotateY(alpha) {
       alpha %= (2*Math.PI);
       this.getMesh().rotation.y = alpha;
@@ -72,7 +88,6 @@ class TRigid extends TObject {
 
       this.getMesh().material.diffuseTexture.uOffset = (1 - scale)/2;
       this.getMesh().material.diffuseTexture.vOffset = (1 - scale)/2;
-
    }
 
    offsetTextureX(offset) {
@@ -138,11 +153,13 @@ class TRigid extends TObject {
    }
    
    rotateAroundPoint(point, alpha){
-      const alphaOld = alpha;
-      alpha -= this.getRotationY();
+      //console.log(`name: ${this.getMesh().name}, ${alpha}`);
+      //const alphaOld = alpha;
+      //alpha -= this.getRotationY();
       this.rotateY(alpha + this.getRotationY());
+      //console.log(`name: ${this.getMesh().name}, ${this.getRotationY()}`);
       const objPosition = this.getPosition();
-
+         
       this.getMesh().position.x = point.x + (objPosition.x - point.x)*Math.cos(alpha) - (objPosition.z - point.z)*Math.sin(-alpha);
       this.getMesh().position.z = point.z + (objPosition.z - point.z)*Math.cos(alpha) + (objPosition.x - point.x)*Math.sin(-alpha);
    }
@@ -258,3 +275,4 @@ class TRigid extends TObject {
 };
 
 export default TRigid
+

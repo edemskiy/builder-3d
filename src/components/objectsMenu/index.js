@@ -9,52 +9,59 @@ import T3DObject from '../../graphics/T3DObject'
 import TFloor from '../../graphics/TFloor'
 
 import {Canvas} from '../../constants/canvas'
+import {basicObjects, objectsStruct} from '../../constants/basicObjects'
 import {PickedObjects} from '../../constants/pickedObjects'
+import {uploadTypes} from '../../constants/uploadTypes'
 
 import { setActiveControlMenu, addTexture, deleteTexture, addCustomObject, deleteCustomObject } from '../../actions/canvas'
+
+
+
 
 class ObjectsMenu extends Component {
 
 	componentDidMount(){
-		
-		
 	}
+
 	componentDidUpdate(prevProps){
 		if(prevProps.scene !== this.props.scene){
 			this.objects = {
-				"TWall": {
-					"constructor": TWall,
-					"defParams": {height: 20, width: 50, depth:0.5, name: "defName", scene: this.props.scene}
+				[basicObjects.TWall]: {
+					[objectsStruct.constructor]: TWall,
+					[objectsStruct.defaultParams]: {height: 20, width: 50, depth:0.5, name: "defName", scene: this.props.scene}
 				},
-				"TFloor": {
-					"constructor": TFloor,
-					"defParams": {height: 40, width: 40, depth:0.5, name: "defName", scene: this.props.scene}
+				[basicObjects.TFloor]: {
+					[objectsStruct.constructor]: TFloor,
+					[objectsStruct.defaultParams]: {height: 40, width: 40, depth:0.5, name: "defName", scene: this.props.scene}
 				}
 			}		
 		}
 	}
+
 	addMesh(){
-		let name = Object.keys(this.refs).filter( (item) => this.refs[item].name === "Objects" && this.refs[item].checked)[0];
+		let name = Object.keys(this.refs).filter( (item) => this.refs[item].name === uploadTypes.objects && this.refs[item].checked)[0];
 		if(name){
 			let newMesh;
 			if(Object.keys(this.objects).some(item => item === name))
-				newMesh = new this.objects[name].constructor(this.objects[name].defParams);
+				newMesh = new this.objects[name][objectsStruct.constructor](this.objects[name][objectsStruct.defaultParams]);
 			else
 				newMesh = new T3DObject({name, src: "data:" + this.props.customObjects.get(name), scene: this.props.scene});
 		}
 	}
 
 	setTexture(){
-		const src = this.props.textures.get(Object.keys(this.refs).filter( (item) => this.refs[item].name === "Texures" && this.refs[item].checked)[0]);
+		const src = this.props.textures.get(Object.keys(this.refs).filter( (item) => this.refs[item].name === uploadTypes.textures && this.refs[item].checked)[0]);
 		if(this.props.pickedObjects.size !== 0){
 			this.props.pickedObjects.last().getObject().setTexture(src);
 		}
 	}
+
 	removeTexture(){
-		const name = Object.keys(this.refs).filter( (item) => this.refs[item].name === "Texures" && this.refs[item].checked)[0];
+		const name = Object.keys(this.refs).filter( (item) => this.refs[item].name === uploadTypes.textures && this.refs[item].checked)[0];
 		if(name)
 			this.props.deleteTextureByName(name);
 	}
+
 	uploadTexture(){
 		let files = this.refs.textureUploader.files;
 		
@@ -69,6 +76,7 @@ class ObjectsMenu extends Component {
 	 		reader.readAsDataURL(f);
 		}
 	}
+
 	uploadObject(){
 		let files = this.refs.customObjectUploader.files;
 		
@@ -116,22 +124,22 @@ class ObjectsMenu extends Component {
 					    		<div className="group-name">
 						    		<p>Базовые объекты</p>
 						    	</div>
-							    <input type="radio" name="Objects" ref="TWall" id="TWall"/><label htmlFor="TWall" >Стена</label>
-							    <input type="radio" name="Objects" ref="TFloor" id="TFloor"/><label htmlFor="TFloor" >Пол</label>
+							    <input type="radio" name={uploadTypes.objects} ref={basicObjects.TWall} id={basicObjects.TWall}/><label htmlFor={basicObjects.TWall} >Стена</label>
+							    <input type="radio" name={uploadTypes.objects} ref={basicObjects.TFloor} id={basicObjects.TFloor}/><label htmlFor={basicObjects.TFloor} >Пол</label>
 							</div>
-							<div className="obj-group">
+							{/*<div className="obj-group">
 							    <div className="group-name">
 						    		<p>Встраиваемые</p>
 						    	</div>			    		
-							    {/*<input type="radio" name="Objects" ref="TWindow" id="TWindow"/><label htmlFor="TWindow">Окно</label>*/}
 				    		</div>
+				    	*/}
 				    		<div className="obj-group">
 				    			<div className="group-name">
 				    				<p>Пользовательские</p>
 				    			</div>
 					    		{Object.keys(this.props.customObjects.toObject()).map( (name, number) => 
 					    			<div  key={number}>
-					    			<input type="radio" name="Objects" ref={name} id={name} />
+					    			<input type="radio" name={uploadTypes.objects} ref={name} id={name} />
 					    			<label htmlFor={name}>{name}</label>
 					    			</div>
 					    		)}
@@ -145,7 +153,7 @@ class ObjectsMenu extends Component {
 				    		
 				    		{Object.keys(this.props.textures.toObject()).map( (name, number) => 
 				    			<div className="flex-row" key={number}>
-				    			<input type="radio" name="Texures" ref={name} id={name} />
+				    			<input type="radio" name={uploadTypes.textures} ref={name} id={name} />
 				    			<label htmlFor={name}>{name}</label>
 				    			<img src={this.props.textures.get(name)} height="40" alt={name}/>
 				    			</div>
@@ -160,8 +168,6 @@ class ObjectsMenu extends Component {
 	    );
 	}
 }
-
-//() => this.setTexture(this.props.textures.get(Object.keys(this.refs).filter( (item) => this.refs[item].name === "Texures" && this.refs[item].checked)[0]))
 
 const mapStateCanvasProps = (state, ownProps) => {
 	return {

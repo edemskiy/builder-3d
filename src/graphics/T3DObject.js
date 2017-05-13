@@ -3,31 +3,23 @@ import TRigid from './TRigid.js'
 
 class T3DObject extends TRigid {
 	constructor(options) {
-		super(options.scene);
+		super(options);
 		BABYLON.SceneLoader.ImportMesh('', '', options.src, options.scene, (newMeshes) => {
 			
 			this.args = options;
-			this.mesh = options.scene.meshes[options.scene.meshes.length - 1];
-			this.mesh.getObject = () => this;
-			this.mesh.name = options.name + Math.random().toFixed(3) * 1000;
-			this.name = this.mesh.name;
-			this.mesh.checkCollisions = this.collision;
-			const size = this.mesh.getBoundingInfo().boundingBox.extendSize;
-
-			// this.mesh.scaling.x = 0.5*options.width/size.x;
-			// this.mesh.scaling.y = 0.5*options.height/size.y;
-			// this.mesh.scaling.z = 0.5*options.depth/size.z;
-			
-			// this.height = options.height;
-			// this.width = options.width;
-			// this.depth = options.depth;
+			let mesh = newMeshes[0];
+			mesh.getObject = () => this;
+			mesh.name = options.name + Math.random().toFixed(3) * 1000;
+			this.name = mesh.name;
+			mesh.checkCollisions = this.collision;
+			const size = mesh.getBoundingInfo().boundingBox.extendSize;
 
 			this.height = 2*size.y;
 			this.width = 2*size.x;
 			this.depth = 2*size.z;
 
-			this.mesh.position.y += this.height/2;
-			this.addMesh(this.mesh);
+			mesh.position.y += this.height/2;
+			this.addMesh(mesh);
 		});
 	}
 
@@ -77,9 +69,7 @@ class T3DObject extends TRigid {
 			currentMesh.position.z = z;
 		}
 		else{
-			if(check.x) this.getMesh().position.x += diff.x;
-			if(check.y) this.getMesh().position.y += diff.y;
-			if(check.z) this.getMesh().position.z += diff.z;
+			super.move(diff, check);
 		}
 	}
 }

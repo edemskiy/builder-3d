@@ -19,6 +19,7 @@ let store = createStore(Reducers,
 	));
 
 ObjInt.setStore(store);
+console.log(store.getState());
 
 ReactDOM.render(
 	<Provider store={store}>

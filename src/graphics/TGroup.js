@@ -25,11 +25,7 @@ class TGroup extends TObject {
 	}
 
 	move(diff, check){
-		this.objArr.forEach(item => {
-			if(check.x) item.position.x += diff.x;
-			if(check.y) item.position.y += diff.y;
-			if(check.z) item.position.z += diff.z;			
-		});
+		this.objArr.forEach(item => item.getObject().move(diff,check));
 
 		if(check.x) this.center.x += diff.x;
 		if(check.y) this.center.y += diff.y;
@@ -51,9 +47,9 @@ class TGroup extends TObject {
 
 	rotateY(alpha){
 		this.objArr.forEach(item => {
-			item.getObject().rotateAroundPoint(this.center, alpha);
+			item.getObject().rotateAroundPoint(this.center, alpha - this.rotation);
 		});
-		this.rotation += alpha;
+		this.rotation = alpha;
 	}
 
 	pickAll(){
@@ -74,6 +70,7 @@ class TGroup extends TObject {
 		});
 		new TGroup(newObjArr);
 	}
+	
 	getRotationY(){
 		return this.rotation;
 	}

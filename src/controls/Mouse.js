@@ -39,7 +39,7 @@ class Mouse extends Component{
 					this.currentMesh = evt.pickInfo.pickedMesh.getObject().getMesh();
 					this.offset = this.objControl.getOffset();
 					
-					this.beginPosition = this.objControl.getMeshPosition(this.currentMesh);
+					this.beginPosition = this.currentMesh.position.clone();
 					this.startingPoint = this.mouse.getGroundPosition();
 
 					if (this.startingPoint){

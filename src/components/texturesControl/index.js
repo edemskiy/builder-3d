@@ -28,18 +28,22 @@ class TexturesControl extends Component {
 			this.refs.main.classList.add('hidden');
 		if(prevProps.pickedObjects !== this.props.pickedObjects && this.props.pickedObjects.size !== 0){
 			const currentObj = this.props.pickedObjects.last().getObject();
-			//this.refs.changeScale.value = currentObj.getMesh();	
+			if(currentObj.material.diffuseTexture){
+				this.refs.changeScale.value = 1/currentObj.getMesh().material.diffuseTexture.uScale;	
+				this.refs.xOffset.value = currentObj.getMesh().material.diffuseTexture.uOffset;
+				this.refs.yOffset.value = currentObj.getMesh().material.diffuseTexture.vOffset;
+			}
 		}
 	}
 
 	changeScale(){
-		this.props.pickedObjects.last().getObject().scaleTexture(+this.refs.changeScale.value);
+		this.props.pickedObjects.last().getObject().scaleTexture(parseFloat(this.refs.changeScale.value));
 	}
 	changeOffsetX(){
-		this.props.pickedObjects.last().getObject().offsetTextureX(+this.refs.xOffset.value);		
+		this.props.pickedObjects.last().getObject().offsetTextureX(parseFloat(this.refs.xOffset.value));		
 	}
 	changeOffsetY(){
-		this.props.pickedObjects.last().getObject().offsetTextureY(+this.refs.yOffset.value);		
+		this.props.pickedObjects.last().getObject().offsetTextureY(parseFloat(this.refs.yOffset.value));		
 	}
 
 	render(){

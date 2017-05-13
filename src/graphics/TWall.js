@@ -6,19 +6,12 @@ import TWindow from './TWindow.js'
 
 class TWall extends TRigid {
    constructor(options) {
-      super(options.scene);
+      super(options);
 
       this.args = options;
-      this.scene = options.scene;
-      const height = options.height, width = options.width, depth = options.depth, name = options.name;
-      const wall = BABYLON.MeshBuilder.CreateBox(name, {height, width, depth, updateble: true}, this.scene);
-      wall.position.y += height/2;
-      wall.checkCollisions = this.collision;
-      this.name = name;
-      
-      this.height = height;
-      this.width = width;
-      this.depth = depth;
+      const wall = BABYLON.MeshBuilder.CreateBox(this.name, {height: this.height, width: this.width, depth: this.depth, updateble: true}, this.scene);
+      wall.position.y += this.height/2;
+      wall.checkCollisions = this.collision;      
 
       let multiMaterial = new BABYLON.StandardMaterial(name + "Material",this.scene);
 
@@ -30,7 +23,7 @@ class TWall extends TRigid {
       this.addMesh(wall);
       this.addMesh( {} );
 
-      this.CSGWall = BABYLON.CSG.FromMesh(this.getMesh());
+      //this.CSGWall = BABYLON.CSG.FromMesh(this.getMesh());
    }
 
    rotateY(alpha){
@@ -39,22 +32,19 @@ class TWall extends TRigid {
       this.rotation = alpha;
 
       for(let key in this.getMesh(1)){
-         this.getMesh(1)[key].rotateAroundPoint(this.getPosition(), alpha);
+         this.getMesh(1)[key].rotateAroundPoint(this.getPosition(), alpha - this.getMesh(1)[key].getRotationY());
       }
-      this.CSGWall.rotation.y = alpha;
+      //this.CSGWall.rotation.y = alpha;
    }
 
-   move(diff, check){
-         if(check.x){this.CSGWall.position.x = this.getMesh().position.x += diff.x;}
-         if(check.y){this.CSGWall.position.y = this.getMesh().position.y += diff.y;}
-         if(check.z){this.CSGWall.position.z = this.getMesh().position.z += diff.z;}
-
-         for(let key in this.getMesh(1)){
-            if(check.x) this.getMesh(1)[key].getMesh().position.x += diff.x;
-            if(check.y) this.getMesh(1)[key].getMesh().position.y += diff.y;
-            if(check.z) this.getMesh(1)[key].getMesh().position.z += diff.z;
-         }
-   }
+   // rotateAroundPoint(point, alpha){
+   //    this.rotateY(alpha + this.getRotationY());
+   //    const objPosition = this.getPosition();      
+   //    let diff ={};
+   //    diff.x = this.getMesh().position.x - (point.x + (objPosition.x - point.x)*Math.cos(alpha) - (objPosition.z - point.z)*Math.sin(-alpha));
+   //    diff.z = this.getMesh().position.z - (point.z + (objPosition.z - point.z)*Math.cos(alpha) + (objPosition.x - point.x)*Math.sin(-alpha));
+   //    this.move(diff, {x: true, y: false, z: true});
+   // }
 
    setMaterial(material) {
 

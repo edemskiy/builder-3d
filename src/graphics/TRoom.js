@@ -6,9 +6,9 @@ import TWall from './TWall'
 import TFloor from './TFloor'
 
 
-class TRoom extends TRigid {
+class TRoom{
    constructor(height, width, length, name, scene) {
-      super(scene);  
+      //super(scene);
       this.name = name;
       let depth = 0.5;     
 
@@ -38,14 +38,14 @@ class TRoom extends TRigid {
       this.setWallsFrontTexture('brickTexture');
       this.setWallsBackTexture('brickTexture');
 
-      this.meshArr[0] = {
-         floor,
-         frontWall,
-         rightWall,
-         backWall,
-         leftWall,
-         //'ceiling': this.ceiling
-      };
+      // this.meshArr[0] = {
+      //    floor,
+      //    frontWall,
+      //    rightWall,
+      //    backWall,
+      //    leftWall,
+      //    //'ceiling': this.ceiling
+      // };
    }
 
    setPosition(x, y, z) {

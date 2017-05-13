@@ -26,9 +26,9 @@ class ObjectControl extends Component {
 
          /* установка значений позиции, поворота и размера */
 
-         this.refs.xPosition.value = (this.groupObject ? +this.groupObject.center.x : +this.currentMeshObject.getPosition().x).toFixed(1);
-         this.refs.yPosition.value = (this.groupObject ? +this.groupObject.center.y : +this.currentMeshObject.getPosition().y).toFixed(1);
-         this.refs.zPosition.value = (this.groupObject ? +this.groupObject.center.z : +this.currentMeshObject.getPosition().z).toFixed(1);
+         this.refs.xPosition.value = (this.groupObject ? this.groupObject.center.x : this.currentMeshObject.getPosition().x).toFixed(1);
+         this.refs.yPosition.value = (this.groupObject ? this.groupObject.center.y : this.currentMeshObject.getPosition().y).toFixed(1);
+         this.refs.zPosition.value = (this.groupObject ? this.groupObject.center.z : this.currentMeshObject.getPosition().z).toFixed(1);
 
          this.refs.rotateY.value = ((this.groupObject ? this.groupObject.getRotationY() : this.currentMeshObject.getRotationY()) * 180 / Math.PI).toFixed(0);
 
@@ -41,9 +41,9 @@ class ObjectControl extends Component {
       if(prevProps.positionChange !== this.props.positionChange){
          if(this.currentMeshObject.getGroupObj) this.groupObject = this.currentMeshObject.getGroupObj();
 
-         this.refs.xPosition.value = (this.groupObject ? this.groupObject.center.x : +this.currentMeshObject.getPosition().x).toFixed(1);
-         this.refs.yPosition.value = (this.groupObject ? this.groupObject.center.y : +this.currentMeshObject.getPosition().y).toFixed(1);
-         this.refs.zPosition.value = (this.groupObject ? this.groupObject.center.z : +this.currentMeshObject.getPosition().z).toFixed(1);
+         this.refs.xPosition.value = (this.groupObject ? this.groupObject.center.x : this.currentMeshObject.getPosition().x).toFixed(1);
+         this.refs.yPosition.value = (this.groupObject ? this.groupObject.center.y : this.currentMeshObject.getPosition().y).toFixed(1);
+         this.refs.zPosition.value = (this.groupObject ? this.groupObject.center.z : this.currentMeshObject.getPosition().z).toFixed(1);
       }
       else if(prevProps.rotationChange !== this.props.rotationChange){
          if(this.currentMeshObject.getGroupObj) this.groupObject = this.currentMeshObject.getGroupObj();
@@ -60,20 +60,19 @@ class ObjectControl extends Component {
    }
 
    changeSize(){
-      this.currentMeshObject.setSize(+this.refs.heightInput.value, +this.refs.widthInput.value, +this.refs.depthInput.value);
+      this.currentMeshObject.setSize(parseFloat(this.refs.heightInput.value), parseFloat(this.refs.widthInput.value), parseFloat(this.refs.depthInput.value));
    }
 
    changePosition(){
       this.groupObject ?
-         this.groupObject.setPosition(+this.refs.xPosition.value, +this.refs.yPosition.value, +this.refs.zPosition.value) :
-         this.currentMeshObject.setPosition(+this.refs.xPosition.value, +this.refs.yPosition.value, +this.refs.zPosition.value);
+         this.groupObject.setPosition(parseFloat(this.refs.xPosition.value), parseFloat(this.refs.yPosition.value), parseFloat(this.refs.zPosition.value)) :
+         this.currentMeshObject.setPosition(parseFloat(this.refs.xPosition.value), parseFloat(this.refs.yPosition.value), parseFloat(this.refs.zPosition.value));
    }
 
    changeRotation(){
       this.groupObject ? 
-         //this.groupObject.rotateY((Math.sign((this.refs.rotateY.value*Math.PI)/180 - this.currentMeshObject.getGroupObj().getRotationY()) * Math.PI)/180) :
-         this.groupObject.rotateY((+this.refs.rotateY.value * Math.PI)/180) :
-         this.currentMeshObject.rotateY((+this.refs.rotateY.value * Math.PI)/180);
+         this.groupObject.rotateY((parseFloat(this.refs.rotateY.value) * Math.PI)/180) :
+         this.currentMeshObject.rotateY((parseFloat(this.refs.rotateY.value) * Math.PI)/180);
    }
 
    setAxisRestrictions(){
