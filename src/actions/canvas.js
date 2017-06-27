@@ -1,78 +1,58 @@
 import { Events } from '../constants/canvas';
-import { Events as MouseEvents} from '../constants/mouseEventsController';
+import { Events as MouseEvents } from '../constants/mouseEventsController';
 
-export const setScene = (scene) => {
-	return {
-		type: Events.newSceneState,
-		scene
-	}
-};
+export const setScene = scene => (
+  {
+    type: Events.newSceneState,
+    scene,
+  }
+);
 
-export const addPickedObjects = (newObjects) => {
-	return {
-		type: Events.newPickedObjects,
-		newObjects
-	}
-};
+export const setMouseProcessingState = newMouseState => (
+  {
+    type: MouseEvents.setMouseProcessingState,
+    newMouseState,
+  }
+);
 
-export const deletePickedObjects = (newObjects) => {
-	return {
-		type: Events.deletePickedObjects,
-		newObjects
-	}
-};
+export const setObjectsInteraction = newObjectsInteraction => (
+  {
+    type: Events.setObjectsInteraction,
+    value: newObjectsInteraction,
+  }
+);
 
-export const clearPickedObjects = () => {
-	return {
-		type: Events.clearPickedObjects
-	}
-};
+export const setActiveControlMenu = newActiveControlMenu => (
+  {
+    type: Events.setActiveControlMenu,
+    newActiveControlMenu,
+  }
+);
 
-export const setMouseProcessingState = (newMouseState) => {
-	return {
-		type: MouseEvents.setMouseProcessingState,
-		newMouseState
-	}
-}
+export const addTexture = newTexture => (
+  {
+    type: Events.addTexture,
+    value: newTexture,
+  }
+);
 
-export const setObjectsInteraction = (newObjectsInteraction) => {
-	return {
-		type: Events.setObjectsInteraction,
-		value: newObjectsInteraction
-	}
-}
+export const deleteTexture = textureName => (
+  {
+    type: Events.deleteTexture,
+    textureName,
+  }
+);
 
-export const setActiveControlMenu = (newActiveControlMenu) => {
-	return {
-		type: Events.setActiveControlMenu,
-		newActiveControlMenu
-	}
-}
+export const addCustomObject = object => (
+  {
+    type: Events.addCustomObject,
+    object,
+  }
+);
 
-export const addTexture = (newTexture) => {
-	return {
-		type: Events.addTexture,
-		value: newTexture
-	}
-}
-
-export const deleteTexture = (textureName) => {
-	return {
-		type: Events.deleteTexture,
-		textureName
-	}
-}
-
-export const addCustomObject = (object) => {
-	return {
-		type: Events.addCustomObject,
-		object
-	}
-}
-
-export const deleteCustomObject = (objectName) => {
-	return {
-		type: Events.deleteCustomObject,
-		objectName
-	}
-}
+export const deleteCustomObject = objectName => (
+  {
+    type: Events.deleteCustomObject,
+    objectName,
+  }
+);

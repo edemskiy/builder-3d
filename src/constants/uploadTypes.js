@@ -1,4 +1,6 @@
-export const uploadTypes = {
-	objects: "objects",
-	textures: "textures"
-}
+const uploadTypes = {
+  objects: 'objects',
+  textures: 'textures',
+};
+
+export default uploadTypes;

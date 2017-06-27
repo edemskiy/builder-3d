@@ -1,16 +1,15 @@
 class TObject {
-   constructor() {
-      this.meshArr = [];
-   }
+  constructor() {
+    this.meshArr = [];
+  }
 
-   addMesh(mesh) {
-      this.meshArr.push(mesh);
-   }
+  addMesh(mesh) {
+    this.meshArr.push(mesh);
+  }
 
-   getMesh(n) {
-      n = n || 0;
-      return this.meshArr[n];
-   }
-};
+  getMesh(n) {
+    return this.meshArr[n || 0];
+  }
+}
 
-export default TObject
+export default TObject;

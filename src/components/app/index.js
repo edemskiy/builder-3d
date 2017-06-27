@@ -1,19 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Canvas from '../canvas/index';
-import Mouse from '../../controls/Mouse'
-import ConrolPanel from '../controlPanel/index'
+import Mouse from '../../controls/Mouse';
+import ConrolPanel from '../controlPanel/index';
 
-
-class App extends Component {
-  render() {
-    return (
-      <div>
-      	<Canvas/>
-      	<Mouse/>
-      	<ConrolPanel/>
-      </div>
-    );
-  }
-}
+const App = () => (
+  <div>
+    <Canvas />
+    <Mouse />
+    <ConrolPanel />
+  </div>
+);
 
 export default App;

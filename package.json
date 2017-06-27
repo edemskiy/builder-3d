@@ -3,10 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^15.0.1",
+    "eslint-plugin-import": "^2.6.0",
+    "eslint-plugin-jsx-a11y": "^5.0.3",
+    "eslint-plugin-react": "^7.1.0",
     "react-scripts": "0.9.5"
   },
   "dependencies": {
+    "aria-query": "^0.7.0",
     "immutable": "^3.8.1",
+    "inquirer": "^3.1.1",
+    "mute-stream": "0.0.7",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-redux": "^5.0.3",
@@ -18,5 +26,18 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).",
+  "main": ".eslintrc",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/edemskiy/babylon_test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/edemskiy/babylon_test/issues"
+  },
+  "homepage": "https://github.com/edemskiy/babylon_test#readme"
 }
