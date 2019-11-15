@@ -1,5 +1,5 @@
-import TGroup from '../graphics/TGroup';
-import { DefaultGround } from '../constants/initializer';
+import TGroup from "../graphics/TGroup";
+import { DefaultGround } from "../constants/initializer";
 
 class TObjectControl {
   constructor(scene) {
@@ -10,9 +10,13 @@ class TObjectControl {
     return { x: this.scene.pointerX, y: this.scene.pointerY };
   }
 
-  static move(objects, diff, check) {
-    objects.forEach((mesh) => {
-      if (mesh.getObject && (mesh.getObject().getClassName() === 'TWall' || mesh.getObject().getClassName() === 'T3DObject')) {
+  move(objects, diff, check) {
+    objects.forEach(mesh => {
+      if (
+        mesh.getObject &&
+        (mesh.getObject().getClassName() === "TWall" ||
+          mesh.getObject().getClassName() === "T3DObject")
+      ) {
         mesh.getObject().move(diff, check);
         return;
       }
@@ -25,13 +29,13 @@ class TObjectControl {
   groupObjects(objects) {
     this.ungroupObjects(objects);
     if (objects.length > 1) {
-      TGroup(objects);
+      const newGroup = new TGroup(objects);
       objects.forEach(object => object.getObject().unpick());
     }
   }
 
-  static ungroupObjects(objects) {
-    objects.forEach((item) => {
+  ungroupObjects(objects) {
+    objects.forEach(item => {
       item.getObject().unpick();
       delete item.getObject().group;
       item.getGroupObj = null;
@@ -39,15 +43,18 @@ class TObjectControl {
     });
   }
 
-  static cloneObjects(objects) {
+  cloneObjects(objects) {
     objects.forEach(item => item.getObject().clone());
   }
 
-  static deleteObjects(objects) {
-    objects.forEach((item) => {
+  deleteObjects(objects) {
+    objects.forEach(item => {
       if (item.getObject().getMesh(1)) {
         for (let key in item.getObject().getMesh(1)) {
-          item.getObject().getMesh(1)[key].remove();
+          item
+            .getObject()
+            .getMesh(1)
+            [key].remove();
           item.getObject().getMesh(1)[key].getObject = null;
         }
       }
@@ -62,17 +69,30 @@ class TObjectControl {
   }
 
   adheranceObject(object) {
-    const ground = this.scene.meshes.filter(mesh => mesh.name === DefaultGround.name)[0];
+    const ground = this.scene.meshes.filter(
+      mesh => mesh.name === DefaultGround.name
+    )[0];
     for (let i = 0; i < this.scene.meshes.length; i += 1) {
       const mesh = this.scene.meshes[i];
-      if (mesh === object || mesh === ground || !mesh.getObject || mesh.name.includes('Wrap') || mesh.intersectsMesh(object)) continue;
+      if (
+        mesh === object ||
+        mesh === ground ||
+        !mesh.getObject ||
+        mesh.name.includes("Wrap") ||
+        mesh.intersectsMesh(object)
+      )
+        continue;
 
-      const distanceInfo = object.getObject().getDistanceFromObject(mesh.getObject());
+      const distanceInfo = object
+        .getObject()
+        .getDistanceFromObject(mesh.getObject());
 
       if (!distanceInfo) break;
 
       if (distanceInfo.dist < 2.5) {
-        object.getObject().move(distanceInfo.diff, { x: true, y: false, z: true });
+        object
+          .getObject()
+          .move(distanceInfo.diff, { x: true, y: false, z: true });
         object.isPin = true;
         break;
       }

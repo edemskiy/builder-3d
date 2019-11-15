@@ -1,4 +1,4 @@
-import TObject from './TObject';
+import TObject from "./TObject";
 
 // eslint-disable-next-line
 const BABYLON = window.BABYLON;
@@ -7,7 +7,7 @@ class TGroup extends TObject {
   constructor(objects) {
     super();
     this.objArr = objects;
-    this.objArr.forEach((item) => {
+    this.objArr.forEach(item => {
       item.getGroupObj = () => this;
       item.getObject().getGroupObj = () => this;
     });
@@ -47,8 +47,9 @@ class TGroup extends TObject {
   }
 
   rotateY(alpha) {
-    this.objArr.forEach(item => item.getObject()
-      .rotateAroundPoint(this.center, alpha - this.rotation));
+    this.objArr.forEach(item =>
+      item.getObject().rotateAroundPoint(this.center, alpha - this.rotation)
+    );
     this.rotation = alpha;
   }
 
@@ -61,14 +62,18 @@ class TGroup extends TObject {
   }
 
   clone() {
-    const newObjArr = this.objArr.map(item => item.getObject().clone().getMesh());
+    const newObjArr = this.objArr.map(item =>
+      item
+        .getObject()
+        .clone()
+        .getMesh()
+    );
     TGroup(newObjArr);
   }
 
   getRotationY() {
     return this.rotation;
   }
-
 }
 
 export default TGroup;

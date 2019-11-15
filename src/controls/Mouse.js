@@ -1,14 +1,19 @@
 /* eslint-disable react/no-string-refs, react/prop-types */
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import { Canvas } from '../constants/canvas';
-import { EventsState as MouseEventsState } from '../constants/mouseEventsController';
-import { PickedObjects } from '../constants/pickedObjects';
+import { Component } from "react";
+import { connect } from "react-redux";
+import { Canvas } from "../constants/canvas";
+import { EventsState as MouseEventsState } from "../constants/mouseEventsController";
+import { PickedObjects } from "../constants/pickedObjects";
 
-import TObjectControl from '../graphics/TObjectControl';
-import TMouse from '../graphics/TMouse';
+import TObjectControl from "../graphics/TObjectControl";
+import TMouse from "../graphics/TMouse";
 
-import { addPickedObjects, deletePickedObjects, clearPickedObjects, positionChange } from '../actions/pickedObjects';
+import {
+  addPickedObjects,
+  deletePickedObjects,
+  clearPickedObjects,
+  positionChange
+} from "../actions/pickedObjects";
 
 class Mouse extends Component {
   componentDidUpdate(prevProps) {
@@ -29,10 +34,16 @@ class Mouse extends Component {
   mouseDown(evt) {
     switch (this.props.mouseControllerState) {
       case MouseEventsState.base: {
-        if (evt.pickInfo.pickedMesh === null || evt.pickInfo.pickedMesh === this.mouse.ground) {
+        if (
+          evt.pickInfo.pickedMesh === null ||
+          evt.pickInfo.pickedMesh === this.mouse.ground
+        ) {
           break;
         }
-        if (evt.pickInfo.pickedMesh.getObject && !evt.pickInfo.pickedMesh.getObject().isPicked) {
+        if (
+          evt.pickInfo.pickedMesh.getObject &&
+          !evt.pickInfo.pickedMesh.getObject().isPicked
+        ) {
           break;
         }
 
@@ -44,15 +55,23 @@ class Mouse extends Component {
           this.startingPoint = this.mouse.getGroundPosition();
 
           if (this.startingPoint) {
-            setTimeout(() => this.props.scene.activeCamera
-              .detachControl(this.props.scene.getEngine().getRenderingCanvas()), 0);
+            setTimeout(
+              () =>
+                this.props.scene.activeCamera.detachControl(
+                  this.props.scene.getEngine().getRenderingCanvas()
+                ),
+              0
+            );
           }
         }
         break;
       }
-      case MouseEventsState.groupObjects: break;
-      case MouseEventsState.pickObjects: break;
-      default: break;
+      case MouseEventsState.groupObjects:
+        break;
+      case MouseEventsState.pickObjects:
+        break;
+      default:
+        break;
     }
   }
 
@@ -68,19 +87,28 @@ class Mouse extends Component {
         diff.y = (this.offset.y - this.props.scene.pointerY) / 10;
 
         if (this.currentMesh.isPin) {
-          if ((Math.sqrt((this.offset.x - this.props.scene.pointerX) ** 2) +
-            ((this.offset.y - this.props.scene.pointerY) ** 2)) > 50) {
+          if (
+            Math.sqrt((this.offset.x - this.props.scene.pointerX) ** 2) +
+              (this.offset.y - this.props.scene.pointerY) ** 2 >
+            50
+          ) {
             this.currentMesh.isPin = false;
           } else return;
         }
 
         if (this.currentMesh.getGroupObj) {
-          this.currentMesh.getGroupObj().move(diff, this.props.axisRestrictions.toObject());
+          this.currentMesh
+            .getGroupObj()
+            .move(diff, this.props.axisRestrictions.toObject());
         } else {
-          this.objControl.move([this.currentMesh], diff, this.props.axisRestrictions.toObject());
+          this.objControl.move(
+            [this.currentMesh],
+            diff,
+            this.props.axisRestrictions.toObject()
+          );
         }
 
-        if (this.props.adheranceObjects.get('toObjects')) {
+        if (this.props.adheranceObjects.get("toObjects")) {
           this.objControl.adheranceObject(this.currentMesh);
         }
 
@@ -89,8 +117,10 @@ class Mouse extends Component {
         this.props.changePosition();
         break;
       }
-      case MouseEventsState.pickObjects: break;
-      default: break;
+      case MouseEventsState.pickObjects:
+        break;
+      default:
+        break;
     }
   }
 
@@ -98,20 +128,34 @@ class Mouse extends Component {
     switch (this.props.mouseControllerState) {
       case MouseEventsState.base: {
         if (this.startingPoint) {
-          this.props.scene.activeCamera
-            .attachControl(this.props.scene.getEngine().getRenderingCanvas(), true);
+          this.props.scene.activeCamera.attachControl(
+            this.props.scene.getEngine().getRenderingCanvas(),
+            true
+          );
 
-          if (this.currentMesh.getObject().getClassName() === 'T3DObject') {
+          if (this.currentMesh.getObject().getClassName() === "T3DObject") {
             for (let i = 0; i < this.props.scene.meshes.length; i += 1) {
               const tmpMesh = this.props.scene.meshes[i];
-              if (!tmpMesh.getObject) {
+              if (tmpMesh.getObject) {
                 if (this.currentMesh.getContainingWall) {
-                  this.currentMesh.getContainingWall()
-                    .deleteObject(this.currentMesh.getObject(), this.beginPosition);
+                  this.currentMesh
+                    .getContainingWall()
+                    .deleteObject(
+                      this.currentMesh.getObject(),
+                      this.beginPosition
+                    );
                 }
-                if (tmpMesh.intersectsMesh(this.currentMesh) && tmpMesh.getObject().getClassName() === 'TWall') {
-                  if (tmpMesh.getObject().isFreeSpace(this.currentMesh.getObject())) {
-                    this.currentMesh.position = tmpMesh.getObject()
+                if (
+                  tmpMesh.intersectsMesh(this.currentMesh) &&
+                  tmpMesh.getObject().getClassName() === "TWall"
+                ) {
+                  if (
+                    tmpMesh
+                      .getObject()
+                      .isFreeSpace(this.currentMesh.getObject())
+                  ) {
+                    this.currentMesh.position = tmpMesh
+                      .getObject()
                       .getAddingObjPosition(this.currentMesh.position);
                   } else this.currentMesh.position = this.beginPosition;
 
@@ -124,7 +168,7 @@ class Mouse extends Component {
           this.startingPoint = null;
           break;
         } else {
-          this.props.scene.meshes.forEach((item) => {
+          this.props.scene.meshes.forEach(item => {
             if (item.getObject) {
               item.getObject().unpick();
             }
@@ -161,7 +205,9 @@ class Mouse extends Component {
           } else {
             if (pickedMeshObj.getGroupObj) {
               pickedMeshObj.getGroupObj().pickAll();
-              this.props.addNewPickedObjects(pickedMeshObj.getGroupObj().objArr);
+              this.props.addNewPickedObjects(
+                pickedMeshObj.getGroupObj().objArr
+              );
               break;
             }
             pickedMeshObj.pick();
@@ -170,47 +216,43 @@ class Mouse extends Component {
         }
         break;
 
-      case MouseEventsState.groupObjects: break;
-      default: break;
+      case MouseEventsState.groupObjects:
+        break;
+      default:
+        break;
     }
   }
 
   render() {
     return null;
   }
-
-
 }
 
-const mapStateCanvasProps = state => (
-  {
-    scene: state.canvas.get(Canvas.scene),
-    pickedObjects: state.pickedObjects.get(PickedObjects.pickedObjects),
-    mouseControllerState: state.canvas.get(Canvas.mouseControllerState),
-    axisRestrictions: state.pickedObjects.get(PickedObjects.axisRestrictions),
-    adheranceObjects: state.pickedObjects.get(PickedObjects.adheranceObjects),
-    // positionChange: state.pickedObjects.get(PickedObjects.isPositionChanged),
+const mapStateCanvasProps = state => ({
+  scene: state.canvas.get(Canvas.scene),
+  pickedObjects: state.pickedObjects.get(PickedObjects.pickedObjects),
+  mouseControllerState: state.canvas.get(Canvas.mouseControllerState),
+  axisRestrictions: state.pickedObjects.get(PickedObjects.axisRestrictions),
+  adheranceObjects: state.pickedObjects.get(PickedObjects.adheranceObjects)
+  // positionChange: state.pickedObjects.get(PickedObjects.isPositionChanged),
+});
+
+const mapDispatchToCanvasProps = dispatch => ({
+  addNewPickedObjects: newObjects => {
+    dispatch(addPickedObjects(newObjects));
+  },
+
+  delPickedObjects: newObjects => {
+    dispatch(deletePickedObjects(newObjects));
+  },
+
+  clrPickedObjects: () => {
+    dispatch(clearPickedObjects());
+  },
+
+  changePosition: () => {
+    dispatch(positionChange());
   }
-);
-
-const mapDispatchToCanvasProps = dispatch => (
-  {
-    addNewPickedObjects: (newObjects) => {
-      dispatch(addPickedObjects(newObjects));
-    },
-
-    delPickedObjects: (newObjects) => {
-      dispatch(deletePickedObjects(newObjects));
-    },
-
-    clrPickedObjects: () => {
-      dispatch(clearPickedObjects());
-    },
-
-    changePosition: () => {
-      dispatch(positionChange());
-    },
-  }
-);
+});
 
 export default connect(mapStateCanvasProps, mapDispatchToCanvasProps)(Mouse);

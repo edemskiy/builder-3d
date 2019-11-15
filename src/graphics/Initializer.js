@@ -1,6 +1,11 @@
 /* global window */
-import { DefaultCamera, DefaultGround, DefaultLight, DefaultRoom } from '../constants/initializer';
-import TRoom from './TRoom';
+import {
+  DefaultCamera,
+  DefaultGround,
+  DefaultLight,
+  DefaultRoom
+} from "../constants/initializer";
+import TRoom from "./TRoom";
 
 const BABYLON = window.BABYLON;
 
@@ -17,32 +22,46 @@ class Initializer {
   }
 
   createDefaultCamera() {
-    const camera = new BABYLON.FreeCamera(DefaultCamera.name,
-    new BABYLON.Vector3(
-      DefaultCamera.position.x,
-      DefaultCamera.position.y,
-      DefaultCamera.position.z),
-    this.scene);
+    const camera = new BABYLON.FreeCamera(
+      DefaultCamera.name,
+      new BABYLON.Vector3(
+        DefaultCamera.position.x,
+        DefaultCamera.position.y,
+        DefaultCamera.position.z
+      ),
+      this.scene
+    );
 
-    camera.setTarget(new BABYLON.Vector3(
-      DefaultCamera.target.x,
-      DefaultCamera.target.y,
-      DefaultCamera.target.z));
+    camera.setTarget(
+      new BABYLON.Vector3(
+        DefaultCamera.target.x,
+        DefaultCamera.target.y,
+        DefaultCamera.target.z
+      )
+    );
 
     camera.attachControl(this.canvas);
     this.defautCamera = camera;
   }
 
   createDefaultGround() {
-    const ground = BABYLON.MeshBuilder.CreateGround(DefaultGround.name,
+    const ground = BABYLON.MeshBuilder.CreateGround(
+      DefaultGround.name,
       {
         height: DefaultGround.height,
-        width: DefaultGround.width,
+        width: DefaultGround.width
       },
-      this.scene);
+      this.scene
+    );
 
-    const groundMaterial = new BABYLON.StandardMaterial(DefaultGround.materialName, this.scene);
-    groundMaterial.diffuseTexture = new BABYLON.Texture(DefaultGround.texture.path, this.scene);
+    const groundMaterial = new BABYLON.StandardMaterial(
+      DefaultGround.materialName,
+      this.scene
+    );
+    groundMaterial.diffuseTexture = new BABYLON.Texture(
+      DefaultGround.texture.path,
+      this.scene
+    );
     ground.checkCollisions = true;
     groundMaterial.diffuseTexture.uScale = DefaultGround.texture.uScale;
     groundMaterial.diffuseTexture.vScale = DefaultGround.texture.vScale;
@@ -57,7 +76,8 @@ class Initializer {
       DefaultRoom.width,
       DefaultRoom.depth,
       DefaultRoom.name,
-      this.scene);
+      this.scene
+    );
 
     room1.setPosition(0, 0, 0);
   }
@@ -68,13 +88,14 @@ class Initializer {
       new BABYLON.Vector3(
         DefaultLight.direction.x,
         DefaultLight.direction.y,
-        DefaultLight.direction.z),
-      this.scene);
+        DefaultLight.direction.z
+      ),
+      this.scene
+    );
 
     light.intensity = DefaultLight.intensity;
     this.defaultLight = light;
   }
-
 }
 
 export default Initializer;

@@ -1,22 +1,32 @@
-import TRigid from './TRigid';
-import TWindow from './TWindow';
+import TRigid from "./TRigid";
+import TWindow from "./TWindow";
 
 // eslint-disable-next-line
 const BABYLON = window.BABYLON;
-
 
 class TWall extends TRigid {
   constructor(options) {
     super(options);
 
     this.args = options;
-    const wall = BABYLON.MeshBuilder.CreateBox(this.name,
-     { height: this.height, width: this.width, depth: this.depth, updateble: true }, this.scene);
+    const wall = BABYLON.MeshBuilder.CreateBox(
+      this.name,
+      {
+        height: this.height,
+        width: this.width,
+        depth: this.depth,
+        updateble: true
+      },
+      this.scene
+    );
 
     wall.position.y += this.height / 2;
     wall.checkCollisions = this.collision;
 
-    const multiMaterial = new BABYLON.StandardMaterial(`${this.name}Material`, this.scene);
+    const multiMaterial = new BABYLON.StandardMaterial(
+      `${this.name}Material`,
+      this.scene
+    );
 
     wall.material = multiMaterial;
     this.material = multiMaterial;
@@ -34,8 +44,9 @@ class TWall extends TRigid {
     this.getMesh().rotation.y = beta;
     this.rotation = beta;
 
-    Object.values(this.getMesh(1)).map(mesh => mesh
-      .rotateAroundPoint(wallPosition, beta - mesh.getRotationY()));
+    Object.values(this.getMesh(1)).map(mesh =>
+      mesh.rotateAroundPoint(wallPosition, beta - mesh.getRotationY())
+    );
 
     /*
     for (let key in this.getMesh(1)) {
@@ -52,16 +63,31 @@ class TWall extends TRigid {
   }
 
   setTexture(name) {
-    this.material.diffuseTexture = new BABYLON.Texture(`data:name${name.length}`, this.scene, true,
-      true, BABYLON.Texture.BILINEAR_SAMPLINGMODE, null, null, name, true);
+    this.material.diffuseTexture = new BABYLON.Texture(
+      `data:name${name.length}`,
+      this.scene,
+      true,
+      true,
+      BABYLON.Texture.BILINEAR_SAMPLINGMODE,
+      null,
+      null,
+      name,
+      true
+    );
   }
 
   setFrontTexture(name) {
-    this.material.diffuseTexture = new BABYLON.Texture(`./textures/${name}.jpg`, this.scene);
+    this.material.diffuseTexture = new BABYLON.Texture(
+      `./textures/${name}.jpg`,
+      this.scene
+    );
   }
 
   setBackTexture(name) {
-    this.material.diffuseTexture = new BABYLON.Texture(`./textures/${name}.jpg`, this.scene);
+    this.material.diffuseTexture = new BABYLON.Texture(
+      `./textures/${name}.jpg`,
+      this.scene
+    );
   }
 
   getAddingObjPosition(pickedPoint) {
@@ -69,44 +95,53 @@ class TWall extends TRigid {
     const c = this.width / 2;
     const alpha = -this.getRotationY();
     const wallLeftPoint = new BABYLON.Vector3(
-      currentPosition.x - (c * Math.cos(alpha)),
+      currentPosition.x - c * Math.cos(alpha),
       currentPosition.y,
-      currentPosition.z - (c * Math.sin(alpha)));
+      currentPosition.z - c * Math.sin(alpha)
+    );
 
-    const xPosition = Math
-      .sqrt(((wallLeftPoint.x - pickedPoint.x) * (wallLeftPoint.x - pickedPoint.x)) +
-         ((wallLeftPoint.z - pickedPoint.z) * (wallLeftPoint.z - pickedPoint.z)));
+    const xPosition = Math.sqrt(
+      (wallLeftPoint.x - pickedPoint.x) * (wallLeftPoint.x - pickedPoint.x) +
+        (wallLeftPoint.z - pickedPoint.z) * (wallLeftPoint.z - pickedPoint.z)
+    );
 
     const objPosition = new BABYLON.Vector3(
-      wallLeftPoint.x + (xPosition * Math.cos(alpha)),
+      wallLeftPoint.x + xPosition * Math.cos(alpha),
       pickedPoint.y,
-      wallLeftPoint.z + (xPosition * Math.sin(alpha)));
+      wallLeftPoint.z + xPosition * Math.sin(alpha)
+    );
     return objPosition;
   }
 
   isFreeSpace(addingObject) {
-    return Object.keys(this.meshArr[1]).every((item) => {
+    return Object.keys(this.meshArr[1]).every(item => {
       if (this.meshArr[1][item] === addingObject) return true;
 
-      return !this.meshArr[1][item].getMesh().intersectsMesh(addingObject.getMesh());
+      return !this.meshArr[1][item]
+        .getMesh()
+        .intersectsMesh(addingObject.getMesh());
     });
   }
 
   addObject(object) {
     const addingObject = object;
     const cutout = new TWindow({
-      name: 'window',
+      name: "window",
       height: addingObject.height,
       width: addingObject.width,
       depth: addingObject.depth,
       position: addingObject.getMesh().position,
-      scene: this.scene,
+      scene: this.scene
     });
 
     cutout.createObject();
 
     const cutoutPos = addingObject.getMesh().position;
-    cutout.getMesh().position = new BABYLON.Vector3(cutoutPos.x, cutoutPos.y, cutoutPos.z);
+    cutout.getMesh().position = new BABYLON.Vector3(
+      cutoutPos.x,
+      cutoutPos.y,
+      cutoutPos.z
+    );
 
     cutout.getMesh().rotation.y = this.rotation;
 
@@ -119,7 +154,11 @@ class TWall extends TRigid {
     cutout.getMesh().dispose();
     this.remove();
 
-    const newMeshWall = wallCSG.toMesh(`${this.name}afterAdd`, this.material, this.scene);
+    const newMeshWall = wallCSG.toMesh(
+      `${this.name}afterAdd`,
+      this.material,
+      this.scene
+    );
     newMeshWall.rotation.y = this.rotation;
 
     newMeshWall.material = this.material;
@@ -139,12 +178,12 @@ class TWall extends TRigid {
     const currentPosition = this.getPosition();
 
     const cutout = new TWindow({
-      name: 'window',
+      name: "window",
       height: object.height,
       width: object.width,
       depth: object.depth,
       position: object.getMesh().position,
-      scene: this.scene,
+      scene: this.scene
     });
 
     cutout.createObject();
@@ -152,11 +191,23 @@ class TWall extends TRigid {
     // const cutoutPos = object.getMesh().position;
     const cutoutPos = objPosition;
 
-    cutout.getMesh().position = new BABYLON.Vector3(cutoutPos.x, cutoutPos.y, cutoutPos.z);
+    cutout.getMesh().position = new BABYLON.Vector3(
+      cutoutPos.x,
+      cutoutPos.y,
+      cutoutPos.z
+    );
     cutout.getMesh().rotation.y = this.rotation;
 
-    const solidwall = BABYLON.MeshBuilder.CreateBox(this.name,
-      { height: this.height, width: this.width, depth: this.depth, updateble: true }, this.scene);
+    const solidwall = BABYLON.MeshBuilder.CreateBox(
+      this.name,
+      {
+        height: this.height,
+        width: this.width,
+        depth: this.depth,
+        updateble: true
+      },
+      this.scene
+    );
     solidwall.position = currentPosition;
     solidwall.rotation.y = this.rotation;
 
@@ -172,7 +223,11 @@ class TWall extends TRigid {
     solidwall.dispose();
     this.remove();
 
-    const newMeshWall = solidWallCSG.toMesh(`${this.name}afterDelete`, this.material, this.scene);
+    const newMeshWall = solidWallCSG.toMesh(
+      `${this.name}afterDelete`,
+      this.material,
+      this.scene
+    );
 
     newMeshWall.checkCollisions = this.collision;
     newMeshWall.getObject = () => this;

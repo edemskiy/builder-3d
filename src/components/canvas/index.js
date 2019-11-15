@@ -1,10 +1,10 @@
 /* eslint-disable react/no-string-refs, react/prop-types */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import { connect } from "react-redux";
 
-import { setScene } from '../../actions/canvas';
-import Map from '../../graphics/Map';
-import Initializer from '../../graphics/Initializer';
+import { setScene } from "../../actions/canvas";
+import Map from "../../graphics/Map";
+import Initializer from "../../graphics/Initializer";
 
 class Canvas extends Component {
   componentDidMount() {
@@ -30,12 +30,8 @@ class Canvas extends Component {
   }
 }
 
-
-const mapDispatchToCanvasProps = dispatch => (
-  {
-    setNewScene: scene => dispatch(setScene(scene)),
-  }
-);
-
+const mapDispatchToCanvasProps = dispatch => ({
+  setNewScene: scene => dispatch(setScene(scene))
+});
 
 export default connect(null, mapDispatchToCanvasProps)(Canvas);

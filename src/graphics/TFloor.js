@@ -1,4 +1,4 @@
-import TWall from './TWall';
+import TWall from "./TWall";
 
 class TFloor extends TWall {
   constructor(options) {

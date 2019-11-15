@@ -1,39 +1,56 @@
-import Immutable from 'immutable';
-import { Events, PickedObjects } from '../constants/pickedObjects';
+import Immutable from "immutable";
+import { Events, PickedObjects } from "../constants/pickedObjects";
 // import  { Events as MouseEvents } from '../constants/mouseEventsController';
-import InitialState from '../states/pickedObjects';
+import InitialState from "../states/pickedObjects";
 
 function addNewPickedObjects(state, action) {
-  const newPickedObjets = state.get(PickedObjects.pickedObjects)
+  const newPickedObjets = state
+    .get(PickedObjects.pickedObjects)
     .concat(Immutable.List(action.newObjects));
 
   return state.set(PickedObjects.pickedObjects, newPickedObjets);
 }
 
 function deletePickedObjects(state, action) {
-  const newPickedObjets = state.get(PickedObjects.pickedObjects)
+  const newPickedObjets = state
+    .get(PickedObjects.pickedObjects)
     .filter(value => action.newObjects.every(item => item !== value));
   return state.set(PickedObjects.pickedObjects, newPickedObjets);
 }
 
 function clearPickedObjects(state) {
-  return state.set(PickedObjects.pickedObjects, state.get(PickedObjects.pickedObjects).clear());
+  return state.set(
+    PickedObjects.pickedObjects,
+    state.get(PickedObjects.pickedObjects).clear()
+  );
 }
 
 function positionChange(state) {
-  return state.set(PickedObjects.isPositionChanged, state.get(PickedObjects.isPositionChanged) + 1);
+  return state.set(
+    PickedObjects.isPositionChanged,
+    state.get(PickedObjects.isPositionChanged) + 1
+  );
 }
 
 function sizeChange(state) {
-  return state.set(PickedObjects.isSizeChanged, state.get(PickedObjects.isSizeChanged) + 1);
+  return state.set(
+    PickedObjects.isSizeChanged,
+    state.get(PickedObjects.isSizeChanged) + 1
+  );
 }
 
 function rotationChange(state) {
-  return state.set(PickedObjects.isRotationChanged, state.get(PickedObjects.isRotationChanged) + 1);
+  return state.set(
+    PickedObjects.isRotationChanged,
+    state.get(PickedObjects.isRotationChanged) + 1
+  );
 }
 
 function textureChange(state) {
-  return state.set(PickedObjects.isTextureChanged, state.get(PickedObjects.isTextureChanged) + 1);
+  return state.set(
+    PickedObjects.isTextureChanged,
+    state.get(PickedObjects.isTextureChanged) + 1
+  );
 }
 
 function setAxisRestriction(state, action) {

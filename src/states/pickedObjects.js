@@ -1,6 +1,5 @@
-import Immutable from 'immutable';
-import { PickedObjects } from '../constants/pickedObjects';
-
+import Immutable from "immutable";
+import { PickedObjects } from "../constants/pickedObjects";
 
 const state = Immutable.Map([
   [PickedObjects.pickedObjects, Immutable.List()],
@@ -8,8 +7,21 @@ const state = Immutable.Map([
   [PickedObjects.isSizeChanged, 0],
   [PickedObjects.isRotationChanged, 0],
   [PickedObjects.isTextureChanged, 0],
-  [PickedObjects.axisRestrictions, Immutable.Map([['x', true], ['y', false], ['z', true]])],
-  [PickedObjects.adheranceObjects, Immutable.Map([['toObjects', false], ['toGrid', false]])],
+  [
+    PickedObjects.axisRestrictions,
+    Immutable.Map([
+      ["x", true],
+      ["y", false],
+      ["z", true]
+    ])
+  ],
+  [
+    PickedObjects.adheranceObjects,
+    Immutable.Map([
+      ["toObjects", false],
+      ["toGrid", false]
+    ])
+  ]
 ]);
 
 export default state;

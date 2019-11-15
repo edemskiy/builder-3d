@@ -1,5 +1,5 @@
 /* global window */
-import TObject from './TObject';
+import TObject from "./TObject";
 
 const BABYLON = window.BABYLON;
 
@@ -8,7 +8,7 @@ class TRigid extends TObject {
     super();
 
     this.scene = options.scene;
-    this.material = new BABYLON.StandardMaterial('material', this.scene);
+    this.material = new BABYLON.StandardMaterial("material", this.scene);
     // this.collision = true;
     this.isPicked = false;
     this.isPinned = false;
@@ -25,7 +25,8 @@ class TRigid extends TObject {
     return new BABYLON.Vector3(
       this.getMesh().position.x,
       this.getMesh().position.y,
-      this.getMesh().position.z);
+      this.getMesh().position.z
+    );
   }
 
   setPosition(x, y, z) {
@@ -38,9 +39,15 @@ class TRigid extends TObject {
   }
 
   move(diff, check) {
-    if (check.x) { this.getMesh().position.x += diff.x; }
-    if (check.y) { this.getMesh().position.y += diff.y; }
-    if (check.z) { this.getMesh().position.z += diff.z; }
+    if (check.x) {
+      this.getMesh().position.x += diff.x;
+    }
+    if (check.y) {
+      this.getMesh().position.y += diff.y;
+    }
+    if (check.z) {
+      this.getMesh().position.z += diff.z;
+    }
 
     for (let key in this.getMesh(1)) {
       if (check.x) this.getMesh(1)[key].getMesh().position.x += diff.x;
@@ -50,7 +57,7 @@ class TRigid extends TObject {
   }
 
   rotateY(alpha) {
-    alpha %= (2 * Math.PI);
+    alpha %= 2 * Math.PI;
     this.getMesh().rotation.y = alpha;
     this.rotation = alpha;
   }
@@ -68,8 +75,17 @@ class TRigid extends TObject {
   }
 
   setTexture(name) {
-    this.material.diffuseTexture = new BABYLON.Texture(`data:name${name.length}`,
-      this.scene, true, true, BABYLON.Texture.BILINEAR_SAMPLINGMODE, null, null, name, true);
+    this.material.diffuseTexture = new BABYLON.Texture(
+      `data:name${name.length}`,
+      this.scene,
+      true,
+      true,
+      BABYLON.Texture.BILINEAR_SAMPLINGMODE,
+      null,
+      null,
+      name,
+      true
+    );
     this.setMaterial(this.material);
   }
 
@@ -96,17 +112,23 @@ class TRigid extends TObject {
     this.isPicked = true;
     const size = this.getMesh().getBoundingInfo().boundingBox.extendSize;
     // const size = this.getMesh().scaling;
-    this.wrapMesh = BABYLON.MeshBuilder.CreateBox(`${this.name}Wrap`,
+    this.wrapMesh = BABYLON.MeshBuilder.CreateBox(
+      `${this.name}Wrap`,
       {
-        height: (size.y * 2) + 0.3,
-        width: (size.x * 2) + 0.3,
-        depth: (size.z * 2) + 0.3,
-        updateble: true,
-      }, this.scene);
+        height: size.y * 2 + 0.3,
+        width: size.x * 2 + 0.3,
+        depth: size.z * 2 + 0.3,
+        updateble: true
+      },
+      this.scene
+    );
 
     this.wrapMesh.getObject = () => this.getMesh().getObject();
 
-    const wrapMeshMaterial = new BABYLON.StandardMaterial('wrapMaterial', this.scene);
+    const wrapMeshMaterial = new BABYLON.StandardMaterial(
+      "wrapMaterial",
+      this.scene
+    );
     wrapMeshMaterial.wireframe = true;
     wrapMeshMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);
     this.wrapMesh.material = wrapMeshMaterial;
@@ -149,11 +171,15 @@ class TRigid extends TObject {
     this.rotateY(alpha + this.getRotationY());
     const objPosition = this.getPosition();
 
-    this.getMesh().position.x = (point.x + ((objPosition.x - point.x) * Math.cos(alpha))) -
-      ((objPosition.z - point.z) * Math.sin(-alpha));
+    this.getMesh().position.x =
+      point.x +
+      (objPosition.x - point.x) * Math.cos(alpha) -
+      (objPosition.z - point.z) * Math.sin(-alpha);
 
-    this.getMesh().position.z = (point.z + ((objPosition.z - point.z) * Math.cos(alpha))) +
-      ((objPosition.x - point.x) * Math.sin(-alpha));
+    this.getMesh().position.z =
+      point.z +
+      (objPosition.z - point.z) * Math.cos(alpha) +
+      (objPosition.x - point.x) * Math.sin(-alpha);
   }
 
   getClassName() {
@@ -170,12 +196,16 @@ class TRigid extends TObject {
     tmp.getMesh().scaling = new BABYLON.Vector3(
       this.getMesh().scaling.x,
       this.getMesh().scaling.y,
-      this.getMesh().scaling.z,
+      this.getMesh().scaling.z
     );
 
     const pos = this.getPosition();
     const endpoints = this.getEndpoints();
-    tmp.setPosition(((pos.x + endpoints.x.max) - endpoints.x.min) + 5, pos.y, pos.z);
+    tmp.setPosition(
+      pos.x + endpoints.x.max - endpoints.x.min + 5,
+      pos.y,
+      pos.z
+    );
     return tmp;
   }
 
@@ -184,18 +214,40 @@ class TRigid extends TObject {
     const alpha = -this.getRotationY();
 
     const arr = [
-      new BABYLON.Vector3(currPos.x + (this.width / 2), 1, currPos.z + (this.depth / 2)),
-      new BABYLON.Vector3(currPos.x + (this.width / 2), 0, currPos.z - (this.depth / 2)),
-      new BABYLON.Vector3(currPos.x - (this.width / 2), 0, currPos.z + (this.depth / 2)),
-      new BABYLON.Vector3(currPos.x - (this.width / 2), 0, currPos.z - (this.depth / 2)),
+      new BABYLON.Vector3(
+        currPos.x + this.width / 2,
+        1,
+        currPos.z + this.depth / 2
+      ),
+      new BABYLON.Vector3(
+        currPos.x + this.width / 2,
+        0,
+        currPos.z - this.depth / 2
+      ),
+      new BABYLON.Vector3(
+        currPos.x - this.width / 2,
+        0,
+        currPos.z + this.depth / 2
+      ),
+      new BABYLON.Vector3(
+        currPos.x - this.width / 2,
+        0,
+        currPos.z - this.depth / 2
+      )
     ];
 
-    const newArr = arr.map(item => new BABYLON.Vector3(
-      (currPos.x + ((item.x - currPos.x) * Math.cos(alpha))) -
-        ((item.z - currPos.z) * Math.sin(-alpha)),
-      0,
-      (currPos.z + ((item.z - currPos.z) * Math.cos(alpha))) +
-        ((item.x - currPos.x) * Math.sin(-alpha))));
+    const newArr = arr.map(
+      item =>
+        new BABYLON.Vector3(
+          currPos.x +
+            (item.x - currPos.x) * Math.cos(alpha) -
+            (item.z - currPos.z) * Math.sin(-alpha),
+          0,
+          currPos.z +
+            (item.z - currPos.z) * Math.cos(alpha) +
+            (item.x - currPos.x) * Math.sin(-alpha)
+        )
+    );
 
     const xArr = newArr.map(item => item.x);
     const zArr = newArr.map(item => item.z);
@@ -203,12 +255,12 @@ class TRigid extends TObject {
     return {
       x: {
         min: Math.min.apply(Math, xArr),
-        max: Math.max.apply(Math, xArr),
+        max: Math.max.apply(Math, xArr)
       },
       z: {
         min: Math.min.apply(Math, zArr),
-        max: Math.max.apply(Math, zArr),
-      },
+        max: Math.max.apply(Math, zArr)
+      }
     };
   }
 
@@ -223,63 +275,75 @@ class TRigid extends TObject {
 
     if (top && left) {
       return {
-        dist: Math.sqrt(((endpoints.x.min - endpointsMesh.x.max) ** 2) +
-         ((endpoints.z.max - endpointsMesh.z.min) ** 2)),
+        dist: Math.sqrt(
+          (endpoints.x.min - endpointsMesh.x.max) ** 2 +
+            (endpoints.z.max - endpointsMesh.z.min) ** 2
+        ),
 
         diff: new BABYLON.Vector3(
-         endpointsMesh.x.max - endpoints.x.min,
-         0,
-         endpointsMesh.z.min - endpoints.z.max),
+          endpointsMesh.x.max - endpoints.x.min,
+          0,
+          endpointsMesh.z.min - endpoints.z.max
+        )
       };
     } else if (left && bottom) {
       return {
-        dist: Math.sqrt(((endpoints.x.min - endpointsMesh.x.max) ** 2) +
-         ((endpoints.z.min - endpointsMesh.z.max) ** 2)),
+        dist: Math.sqrt(
+          (endpoints.x.min - endpointsMesh.x.max) ** 2 +
+            (endpoints.z.min - endpointsMesh.z.max) ** 2
+        ),
 
         diff: new BABYLON.Vector3(
-         endpointsMesh.x.max - endpoints.x.min,
-         0,
-         endpointsMesh.z.max - endpoints.z.min),
+          endpointsMesh.x.max - endpoints.x.min,
+          0,
+          endpointsMesh.z.max - endpoints.z.min
+        )
       };
     } else if (bottom && right) {
       return {
-        dist: Math.sqrt(((endpoints.x.max - endpointsMesh.x.min) ** 2) +
-         ((endpoints.z.min - endpointsMesh.z.max) ** 2)),
+        dist: Math.sqrt(
+          (endpoints.x.max - endpointsMesh.x.min) ** 2 +
+            (endpoints.z.min - endpointsMesh.z.max) ** 2
+        ),
 
         diff: new BABYLON.Vector3(
-         endpointsMesh.x.min - endpoints.x.max,
-         0,
-         endpointsMesh.z.max - endpoints.z.min),
+          endpointsMesh.x.min - endpoints.x.max,
+          0,
+          endpointsMesh.z.max - endpoints.z.min
+        )
       };
     } else if (right && top) {
       return {
-        dist: Math.sqrt(((endpoints.x.max - endpointsMesh.x.min) ** 2) +
-         ((endpoints.z.max - endpointsMesh.z.min) ** 2)),
+        dist: Math.sqrt(
+          (endpoints.x.max - endpointsMesh.x.min) ** 2 +
+            (endpoints.z.max - endpointsMesh.z.min) ** 2
+        ),
 
         diff: new BABYLON.Vector3(
-         endpointsMesh.x.min - endpoints.x.max,
-         0,
-         endpointsMesh.z.min - endpoints.z.max),
+          endpointsMesh.x.min - endpoints.x.max,
+          0,
+          endpointsMesh.z.min - endpoints.z.max
+        )
       };
     } else if (left) {
       return {
         dist: endpoints.x.min - endpointsMesh.x.max,
-        diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, 0),
+        diff: new BABYLON.Vector3(endpointsMesh.x.max - endpoints.x.min, 0, 0)
       };
     } else if (right) {
       return {
         dist: endpointsMesh.x.min - endpoints.x.max,
-        diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, 0),
+        diff: new BABYLON.Vector3(endpointsMesh.x.min - endpoints.x.max, 0, 0)
       };
     } else if (bottom) {
       return {
         dist: endpoints.z.min - endpointsMesh.z.max,
-        diff: new BABYLON.Vector3(0, 0, endpointsMesh.z.max - endpoints.z.min),
+        diff: new BABYLON.Vector3(0, 0, endpointsMesh.z.max - endpoints.z.min)
       };
     } else if (top) {
       return {
         dist: endpointsMesh.z.min - endpoints.z.max,
-        diff: new BABYLON.Vector3(0, 0, endpointsMesh.z.min - endpoints.z.max),
+        diff: new BABYLON.Vector3(0, 0, endpointsMesh.z.min - endpoints.z.max)
       };
     }
     return null;

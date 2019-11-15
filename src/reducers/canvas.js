@@ -1,6 +1,6 @@
-import { Events, Canvas } from '../constants/canvas';
-import { Events as MouseEvents } from '../constants/mouseEventsController';
-import InitialState from '../states/canvas';
+import { Events, Canvas } from "../constants/canvas";
+import { Events as MouseEvents } from "../constants/mouseEventsController";
+import InitialState from "../states/canvas";
 
 function changeSceneState(state, action) {
   const scene = action.scene;
@@ -18,23 +18,29 @@ function setActiveControlMenu(state, action) {
 function addTexture(state, action) {
   return state.set(
     Canvas.textures,
-    state.get(Canvas.textures).set(action.value.name, action.value.src),
+    state.get(Canvas.textures).set(action.value.name, action.value.src)
   );
 }
 
 function deleteTexture(state, action) {
-  return state.set(Canvas.textures, state.get(Canvas.textures).delete(action.textureName));
+  return state.set(
+    Canvas.textures,
+    state.get(Canvas.textures).delete(action.textureName)
+  );
 }
 
 function addCustomObject(state, action) {
   return state.set(
     Canvas.customObjects,
-    state.get(Canvas.customObjects).set(action.object.name, action.object.src),
+    state.get(Canvas.customObjects).set(action.object.name, action.object.src)
   );
 }
 
 function deleteCustomObject(state, action) {
-  return state.set(Canvas.customObjects, state.get(Canvas.customObjects).delete(action.objectName));
+  return state.set(
+    Canvas.customObjects,
+    state.get(Canvas.customObjects).delete(action.objectName)
+  );
 }
 
 const canvas = (state = InitialState, action) => {

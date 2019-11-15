@@ -1,6 +1,6 @@
 const uploadTypes = {
-  objects: 'objects',
-  textures: 'textures',
+  objects: "objects",
+  textures: "textures"
 };
 
 export default uploadTypes;
