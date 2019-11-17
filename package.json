@@ -33,5 +33,17 @@
   "bugs": {
     "url": "https://github.com/edemskiy/builder-3d/issues"
   },
-  "homepage": "https://github.com/edemskiy/builder-3d#readme"
+  "homepage": "https://github.com/edemskiy/builder-3d#readme",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
