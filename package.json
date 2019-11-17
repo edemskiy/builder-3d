@@ -1,25 +1,25 @@
 {
-  "name": "babylon",
+  "name": "builder-3d",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
     "eslint": "^3.19.0",
-    "eslint-config-airbnb": "^15.0.1",
-    "eslint-plugin-import": "^2.6.0",
-    "eslint-plugin-jsx-a11y": "^5.0.3",
-    "eslint-plugin-react": "^7.1.0",
-    "react-scripts": "0.9.5"
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "eslint-plugin-react": "^7.16.0"
   },
   "dependencies": {
-    "aria-query": "^0.7.0",
-    "immutable": "^3.8.1",
-    "inquirer": "^3.1.1",
+    "aria-query": "^0.7.1",
+    "immutable": "^3.8.2",
+    "inquirer": "^3.3.0",
     "mute-stream": "0.0.7",
-    "react": "^15.4.2",
-    "react-dom": "^15.4.2",
-    "react-redux": "^5.0.3",
-    "redux": "^3.6.0",
-    "redux-thunk": "^2.2.0"
+    "react": "^15.6.2",
+    "react-dom": "^15.6.2",
+    "react-redux": "^5.1.2",
+    "react-scripts": "^3.2.0",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -27,7 +27,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "description": "This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).",
+  "description": "",
   "main": ".eslintrc",
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/edemskiy/babylon_test/issues"
+    "url": "https://github.com/edemskiy/builder-3d/issues"
   },
-  "homepage": "https://github.com/edemskiy/babylon_test#readme"
+  "homepage": "https://github.com/edemskiy/builder-3d#readme"
 }
