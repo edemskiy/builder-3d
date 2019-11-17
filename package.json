@@ -2,13 +2,7 @@
   "name": "builder-3d",
   "version": "0.1.0",
   "private": true,
-  "devDependencies": {
-    "eslint": "^4.18.2",
-    "eslint-config-airbnb": "^15.1.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-jsx-a11y": "^5.1.1",
-    "eslint-plugin-react": "^7.16.0"
-  },
+  "devDependencies": {},
   "dependencies": {
     "aria-query": "^0.7.1",
     "immutable": "^3.8.2",
